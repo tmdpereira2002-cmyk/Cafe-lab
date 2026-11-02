@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Name-only profiles for you and your friends. Anyone using the app can read them
+    // (that's how Friends' recipes works); nobody can delete them.
+    match /profiles/{id} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null
+        && id.matches('^[a-z0-9-]{1,40}$')
+        && request.resource.data.name is string;
+      allow delete: if false;
+    }
+  }
+}
