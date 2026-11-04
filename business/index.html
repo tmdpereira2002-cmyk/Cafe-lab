@@ -69,6 +69,30 @@ dialog::backdrop{background:rgba(20,10,5,.5)}
 .dot{display:inline-block;width:14px;height:14px;border-radius:99px;border:1px solid var(--line);flex:none}
 .layerRow{display:grid;grid-template-columns:1fr 1fr 80px;gap:6px}
 .x{position:absolute;right:10px;top:10px;background:var(--surface);border:1px solid var(--line);color:var(--ink);border-radius:99px;width:38px;height:38px;cursor:pointer;font-size:18px}
+
+/* motion: views rise in, cards stagger, dialogs slide up, steam drifts */
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.92)}70%{transform:scale(1.02)}100%{opacity:1;transform:none}}
+@keyframes sheetUp{from{opacity:0;transform:translateY(40px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes steam{0%{opacity:0;transform:translateY(6px)}30%{opacity:.8}100%{opacity:0;transform:translateY(-10px)}}
+@keyframes tick{0%{transform:scale(.6)}60%{transform:scale(1.25)}100%{transform:none}}
+@keyframes wiggle{0%,100%{transform:none}30%{transform:rotate(-8deg) scale(1.06)}60%{transform:rotate(5deg)}}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}
+#view.anim>*{animation:rise .45s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--i,0)*55ms)}
+.dcards>*,.cards>*{animation:pop .4s cubic-bezier(.34,1.56,.64,1) backwards;animation-delay:calc(var(--j,0)*35ms + 120ms)}
+dialog[open]{animation:sheetUp .38s cubic-bezier(.2,.8,.2,1)}dialog[open]::backdrop{animation:fadeIn .3s}
+.dlgBody>*{animation:rise .4s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--i,0)*40ms + 80ms)}
+.steamA path{animation:steam 2.6s ease-in-out infinite;transform-box:fill-box}.steamA path+path{animation-delay:1.3s}
+button,.dcard,.card,.menu button,.seg button{transition:transform .18s cubic-bezier(.34,1.56,.64,1),background-color .25s,color .25s,box-shadow .25s,border-color .25s}
+button:active,.dcard:active{transform:scale(.96)}
+.dcard:hover,.card:hover{box-shadow:0 6px 18px rgba(40,20,10,.12);transform:translateY(-2px)}
+.dcard .art svg{transition:transform .4s cubic-bezier(.34,1.56,.64,1)}.dcard:hover .art svg{transform:scale(1.06) rotate(-2deg)}
+.bar i{transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.check input:checked{animation:tick .35s cubic-bezier(.34,1.56,.64,1)}
+.hint.ok,.ok.pop{animation:pop .35s both}
+header img{animation:wiggle 1.1s .3s ease-in-out both}
+.toastA{animation:toastIn .3s cubic-bezier(.2,.8,.2,1)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style></head><body>
 <header><div class="wrap">
@@ -277,7 +301,7 @@ function cupSVG(d){const k=CUPS[d.cup]||CUPS.cup,id="cup"+(++cupN),fillTop=k.top
   const handle=k.handle?`<path d="${k.handle}" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>`:"";
   const lid=k.lid?`<rect x="70" y="14" width="60" height="9" rx="3" fill="var(--surface)" stroke="var(--ink)" stroke-width="2.2"/><rect x="76" y="50" width="48" height="22" fill="var(--crema)" opacity=".85"/>`:"";
   const shine=k.glass?`<path d="M${+k.body.match(/M(\d+)/)[1]+6} ${k.top+8}l-2 ${(k.bot-k.top)*0.6}" stroke="#fff" stroke-opacity=".55" stroke-width="3" stroke-linecap="round" fill="none"/>`:"";
-  const steam=!d.iced&&!k.lid?`<g fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round" opacity=".7"><path d="M93 ${k.top-6}c-4-5 4-8 0-13"/><path d="M106 ${k.top-4}c-4-5 4-8 0-13"/></g>`:"";
+  const steam=!d.iced&&!k.lid?`<g class="steamA" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round" opacity=".7"><path d="M93 ${k.top-6}c-4-5 4-8 0-13"/><path d="M106 ${k.top-4}c-4-5 4-8 0-13"/></g>`:"";
   return `<svg viewBox="0 0 200 120" aria-hidden="true"><defs><clipPath id="${id}"><path d="${k.body}"/></clipPath></defs>${sau}${handle}<path d="${k.body}" fill="${k.glass?"color-mix(in srgb,var(--surface) 55%,transparent)":"var(--surface)"}"/><g clip-path="url(#${id})">${out}</g>${shine}${lid}<path d="${k.body}" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>${steam}</svg>`}
 
 // Templates: d = drink. dose = coffee g, yield = espresso g, milk ml, powder g (matcha/chai/cocoa), extra € (syrup etc.)
@@ -339,12 +363,16 @@ document.addEventListener("click",e=>{
   if(r){if(r.dataset.role==="boss"&&S.pin&&S.role!=="boss"){lockView();return}S.role=r.dataset.role;S.section=null;go();return}
   const s=e.target.closest("[data-sec]");if(s){S.section=s.dataset.sec;go()}
 });
-const V=h=>{const v=$("#view");v.onchange=v.oninput=v.onclick=v.onkeydown=null;v.innerHTML=h};
+const V=h=>{const v=$("#view");v.onchange=v.oninput=v.onclick=v.onkeydown=null;const keep=v.dataset.shown===S.section;v.dataset.shown=S.section;v.innerHTML=h;
+  if(!keep){v.classList.remove("anim");void v.offsetWidth;v.classList.add("anim");[...v.children].forEach((c,i)=>c.style.setProperty("--i",Math.min(i,8)))}else v.classList.remove("anim");
+  stagger(v)};
+function stagger(root){root.querySelectorAll(".dcards,.cards").forEach(g=>[...g.children].forEach((c,j)=>c.style.setProperty("--j",Math.min(j,14))));
+  root.querySelectorAll(".bar i").forEach(b=>{const w=b.style.width;b.style.width="0";requestAnimationFrame(()=>requestAnimationFrame(()=>{b.style.width=w}))})}
 const opt=(arr,sel)=>arr.map(x=>`<option value="${x.id}"${x.id===sel?" selected":""}>${esc(x.brand+" "+x.name)}</option>`).join("");
 function twice(b,fn){if(b.dataset.armed){fn();return}b.dataset.armed=1;const t=b.textContent;b.textContent=T("Tap again to confirm","Tik nogmaals om te bevestigen");setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent=t}},3000)}
-function toast(t){const d=document.createElement("div");d.textContent=t;d.setAttribute("role","status");d.style.cssText="position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:99px;font-size:14px;z-index:50";document.body.appendChild(d);setTimeout(()=>d.remove(),1800)}
+function toast(t){const d=document.createElement("div");d.textContent=t;d.setAttribute("role","status");d.className="toastA";d.style.cssText="position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:99px;font-size:14px;z-index:50";document.body.appendChild(d);setTimeout(()=>d.remove(),1800)}
 const dlg=$("#dlg");$("#dlgX").onclick=()=>dlg.close();dlg.addEventListener("click",e=>{if(e.target===dlg)dlg.close()});
-function openDlg(art,html){$("#dlgArt").innerHTML=art;$("#dlgArt").hidden=!art;$("#dlgBody").innerHTML=html;try{dlg.showModal()}catch(e){dlg.setAttribute("open","")}}
+function openDlg(art,html){$("#dlgArt").innerHTML=art;$("#dlgArt").hidden=!art;$("#dlgBody").innerHTML=html;[...$("#dlgBody").children].forEach((c,i)=>c.style.setProperty("--i",Math.min(i,10)));stagger($("#dlgBody"));try{dlg.showModal()}catch(e){dlg.setAttribute("open","")}}
 
 /* ---------- views ---------- */
 const VIEWS={};
