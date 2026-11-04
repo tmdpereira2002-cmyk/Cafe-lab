@@ -267,7 +267,7 @@ document.addEventListener("click",e=>{
   if(r){if(r.dataset.role==="boss"&&S.pin&&S.role!=="boss"){lockView();return}S.role=r.dataset.role;S.section=null;go();return}
   const s=e.target.closest("[data-sec]");if(s){S.section=s.dataset.sec;go()}
 });
-const V=h=>{const v=$("#view");v.onchange=v.oninput=v.onclick=null;v.innerHTML=h};
+const V=h=>{const v=$("#view");v.onchange=v.oninput=v.onclick=v.onkeydown=null;v.innerHTML=h};
 const opt=(arr,sel)=>arr.map(x=>`<option value="${x.id}"${x.id===sel?" selected":""}>${esc(x.brand+" "+x.name)}</option>`).join("");
 function twice(b,fn){if(b.dataset.armed){fn();return}b.dataset.armed=1;const t=b.textContent;b.textContent=T("Tap again to confirm","Tik nogmaals om te bevestigen");setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent=t}},3000)}
 function toast(t){const d=document.createElement("div");d.textContent=t;d.setAttribute("role","status");d.style.cssText="position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:99px;font-size:14px;z-index:50";document.body.appendChild(d);setTimeout(()=>d.remove(),1800)}
@@ -439,11 +439,48 @@ VIEWS.breakeven=()=>{
  wire();
 };
 
+/* routines: the boss's own lists; each section {id,name,weekly,items:[{id,t}]} */
+const uid=()=>Math.random().toString(36).slice(2,9);
+const defRoutines=()=>Object.entries(ROUTINES).map(([k,[name,list]])=>({id:k,name,weekly:k==="weekly",items:list.map((t,i)=>({id:k+i,t}))}));
+if(!Array.isArray(S.routines))S.routines=defRoutines();
+let rEdit=false;
 VIEWS.routine=()=>{
  const today=new Date().toISOString().slice(0,10);if(S.clean.day!==today)S.clean={day:today};
- V(`<h2>${S.role==="boss"?T("Cleaning & routines","Schoonmaak & routines"):T("Daily routines","Dagelijkse routines")}</h2><p class="hint">${T("Tick as you go. Resets every day.","Vink af terwijl je werkt. Elke dag opnieuw.")}</p>`+
- Object.entries(ROUTINES).map(([k,[name,list]])=>{const d=list.filter((_,i)=>S.clean[k+i]).length;return `<div class="panel"><div class="row spread"><h3>${L(name)}</h3><span class="hint">${d}/${list.length}</span></div>${list.map((t,i)=>`<label class="check"><input type="checkbox" data-c="${k+i}"${S.clean[k+i]?" checked":""}><span>${L(t)}</span></label>`).join("")}</div>`}).join(""));
- $("#view").onchange=e=>{const c=e.target.dataset.c;if(c){S.clean[c]=e.target.checked;save();VIEWS.routine()}};
+ const boss=S.role==="boss";if(!boss)rEdit=false;
+ const head=`<div class="row spread" style="margin-bottom:6px"><h2 style="margin:0">${boss?T("Cleaning & routines","Schoonmaak & routines"):T("Daily routines","Dagelijkse routines")}</h2>${boss?`<button type="button" class="${rEdit?"btn":"ghost"}" id="rToggle">${rEdit?T("Done","Klaar"):T("Edit lists","Lijsten bewerken")}</button>`:""}</div>`;
+ if(!rEdit){
+  V(head+`<p class="hint">${T("Tick as you go. Resets every day.","Vink af terwijl je werkt. Elke dag opnieuw.")}${boss?" "+T("Tap “Edit lists” to make these your café's own.","Tik op ‘Lijsten bewerken’ om ze aan te passen aan je café."):""}</p>`+
+  (S.routines.length?S.routines.map(sec=>{const d=sec.items.filter(it=>S.clean[it.id]).length;return `<div class="panel"><div class="row spread"><h3>${esc(L(sec.name))}</h3><span class="hint">${d}/${sec.items.length}</span></div>${sec.items.map(it=>`<label class="check"><input type="checkbox" data-c="${it.id}"${S.clean[it.id]?" checked":""}><span>${esc(L(it.t))}</span></label>`).join("")||`<p class="hint">${T("No tasks yet.","Nog geen taken.")}</p>`}</div>`}).join(""):`<p class="hint">${T("No lists yet.","Nog geen lijsten.")}</p>`));
+  $("#view").onchange=e=>{const c=e.target.dataset.c;if(c){S.clean[c]=e.target.checked;save();VIEWS.routine()}};
+ }else{
+  V(head+`<p class="hint">${T("Change any task, add your own, remove what you don't do, or start a new list (e.g. “Milk fridge” or “Saturday deep clean”). Changes save straight away.","Pas elke taak aan, voeg je eigen taken toe, haal weg wat je niet doet, of begin een nieuwe lijst (bijv. ‘Melkkoelkast’ of ‘Grote schoonmaak zaterdag’). Wijzigingen worden meteen bewaard.")}</p>`+
+  S.routines.map((sec,si)=>`<div class="panel" style="display:flex;flex-direction:column;gap:8px">
+   <div class="row" style="flex-wrap:nowrap"><input id="sn_${sec.id}" data-sname="${si}" value="${esc(L(sec.name))}" aria-label="${T("List name","Naam lijst")}" style="font-weight:600"></div>
+   <div class="row" style="gap:6px"><button type="button" class="ghost" data-up="${si}"${si?"":" disabled"} aria-label="${T("Move up","Omhoog")}">↑</button><button type="button" class="ghost" data-down="${si}"${si<S.routines.length-1?"":" disabled"} aria-label="${T("Move down","Omlaag")}">↓</button><button type="button" class="ghost" data-delsec="${si}">${T("Delete list","Lijst verwijderen")}</button></div>
+   ${sec.items.map((it,ii)=>`<div class="row" style="flex-wrap:nowrap;gap:6px"><textarea id="it_${it.id}" data-item="${si}|${ii}" rows="2" style="min-height:0;resize:none;font-size:15px" aria-label="${T("Task","Taak")}">${esc(L(it.t))}</textarea><button type="button" class="ghost" data-iup="${si}|${ii}"${ii?"":" disabled"} aria-label="${T("Move up","Omhoog")}" style="padding:8px 10px">↑</button><button type="button" class="ghost" data-idel="${si}|${ii}" aria-label="${T("Remove task","Taak verwijderen")}" style="padding:8px 12px">✕</button></div>`).join("")}
+   <div class="row" style="flex-wrap:nowrap;gap:6px"><input id="new_${sec.id}" data-new="${si}" placeholder="${T("New task, e.g. Clean the milk fridge","Nieuwe taak, bijv. Melkkoelkast schoonmaken")}"><button type="button" class="btn" data-add="${si}">${T("Add","Toevoegen")}</button></div></div>`).join("")+
+  `<div class="panel"><h3>${T("New list","Nieuwe lijst")}</h3><div class="row" style="flex-wrap:nowrap;gap:6px"><input id="newSec" placeholder="${T("e.g. Saturday deep clean","bijv. Grote schoonmaak zaterdag")}"><button type="button" class="btn" id="addSec">${T("Add list","Lijst toevoegen")}</button></div></div>
+  <div class="row"><button type="button" class="ghost" id="rClear">${T("Clear everything and start empty","Alles wissen en leeg beginnen")}</button><button type="button" class="ghost" id="rReset">${T("Back to the standard lists","Terug naar de standaardlijsten")}</button></div>`);
+  const v=$("#view"),rr=()=>{save();VIEWS.routine()},ix=s=>s.split("|").map(Number);
+  // typing edits text in place; no re-render so the keyboard stays open
+  v.oninput=e=>{const a=e.target.dataset;if(a.sname!=null){S.routines[a.sname].name=e.target.value;save()}if(a.item){const[si,ii]=ix(a.item);S.routines[si].items[ii].t=e.target.value;save()}};
+  const addItem=si=>{const inp=$(`[data-new="${si}"]`),t=inp.value.trim();if(!t)return;S.routines[si].items.push({id:uid(),t});save();VIEWS.routine();const n=$(`[data-new="${si}"]`);n&&n.focus()};
+  v.onkeydown=e=>{if(e.key!=="Enter")return;const a=e.target.dataset;if(a.new!=null)addItem(+a.new);if(e.target.id==="newSec")$("#addSec").click()};
+  v.onclick=e=>{const b=e.target.closest("button");if(!b)return;const a=b.dataset;
+   if(b.id==="rToggle"){e.stopPropagation();rEdit=false;VIEWS.routine();return}
+   if(a.add!=null)return addItem(+a.add);
+   if(a.idel){const[si,ii]=ix(a.idel);S.routines[si].items.splice(ii,1);return rr()}
+   if(a.iup){const[si,ii]=ix(a.iup),l=S.routines[si].items;[l[ii-1],l[ii]]=[l[ii],l[ii-1]];return rr()}
+   if(a.up!=null){const i=+a.up,l=S.routines;[l[i-1],l[i]]=[l[i],l[i-1]];return rr()}
+   if(a.down!=null){const i=+a.down,l=S.routines;[l[i+1],l[i]]=[l[i],l[i+1]];return rr()}
+   if(a.delsec!=null)return twice(b,()=>{S.routines.splice(+a.delsec,1);rr()});
+   if(b.id==="addSec"){const t=$("#newSec").value.trim();if(!t)return;S.routines.push({id:uid(),name:t,items:[]});rr();const n=$(`[data-new="${S.routines.length-1}"]`);n&&n.focus();return}
+   if(b.id==="rClear")return twice(b,()=>{S.routines=[];rr()});
+   if(b.id==="rReset")return twice(b,()=>{S.routines=defRoutines();rr()});
+  };
+  return;
+ }
+ const t=$("#rToggle");if(t)t.onclick=e=>{e.stopPropagation();rEdit=true;VIEWS.routine()};
 };
 
 VIEWS.machine=()=>{const m=mach();
