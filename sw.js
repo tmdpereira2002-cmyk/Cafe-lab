@@ -1,7 +1,7 @@
 // Café Lab service worker: keeps the whole app on the phone so it opens without internet.
-const VERSION="ef8850a3b7";
+const VERSION="aa5ba26a84";
 const CACHE="bica-"+VERSION;
-const SHELL=["./","./index.html","./fb.js","./config.js","./fonts.css","./manifest.webmanifest","./icon-192.png","./icon-512.png","./icon-maskable-512.png","./apple-touch-icon.png","./fonts/fraunces-latin-500-normal.woff2","./fonts/fraunces-latin-700-normal.woff2","./fonts/work-sans-latin-400-normal.woff2","./fonts/work-sans-latin-500-normal.woff2","./fonts/work-sans-latin-600-normal.woff2","./fonts/ibm-plex-mono-latin-500-normal.woff2"];
+const SHELL=["./","./index.html","./fb.js","./config.js","./fonts.css","./manifest.webmanifest","./icon-v2-192.png","./icon-v2-512.png","./icon-v2-maskable-512.png","./apple-touch-icon-v2.png","./favicon-v2-48.png","./fonts/fraunces-latin-500-normal.woff2","./fonts/fraunces-latin-700-normal.woff2","./fonts/work-sans-latin-400-normal.woff2","./fonts/work-sans-latin-500-normal.woff2","./fonts/work-sans-latin-600-normal.woff2","./fonts/ibm-plex-mono-latin-500-normal.woff2"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL.map(u=>new Request(u,{cache:"reload"})))).then(()=>self.skipWaiting()))});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith("bica-")&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener("fetch",e=>{const u=new URL(e.request.url);
