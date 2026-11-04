@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4ede6" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#1c1512" media="(prefers-color-scheme: dark)">
 <meta name="description" content="Espresso dial-in and brew guide that works offline.">
-<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="favicon-v2-48.png" sizes="48x48"><link rel="icon" href="icon-v2-192.png" sizes="192x192"><link rel="apple-touch-icon" href="apple-touch-icon-v2.png">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="favicon-v3-48.png" sizes="48x48"><link rel="icon" href="icon-v3-192.png" sizes="192x192"><link rel="apple-touch-icon" href="apple-touch-icon-v3.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Café Lab"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="config.js"></script><script src="fb.js" defer></script>
 <style>.installBox{display:flex;flex-direction:column;gap:6px;margin:6px 0}.offlineBar{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 8px);z-index:40;background:var(--ink);color:var(--bg);font-size:13px;padding:6px 12px;border-radius:99px;box-shadow:0 6px 18px -8px rgba(0,0,0,.5);max-width:calc(100% - 32px);text-align:center}.offlineBar.in{animation:offIn .35s ease-out both}@keyframes offIn{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}@media (prefers-reduced-motion:reduce){.offlineBar.in{animation:none}}</style>
@@ -29,7 +29,7 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.2}
 h1{font-size:30px} h2{font-size:22px} h3{font-size:17px}
 p{margin:0}
 .brand{display:flex;align-items:center;gap:10px}
-.brand svg{width:34px;height:34px}.brand svg.logo{width:38px;height:36px;flex:none}@media (max-width:420px){.brand svg.logo{width:32px;height:30px}}
+.brand svg{width:34px;height:34px}.brand .logo{width:38px;height:38px;flex:none;border-radius:10px}@media (max-width:420px){.brand .logo{width:32px;height:32px}}
 .brand h1{white-space:nowrap}
 .setupBtn{margin-left:auto;font-size:13px;font-weight:500;padding:8px 12px;min-height:44px;text-align:left;line-height:1.25;max-width:13em}
 .setupBtn svg{width:18px;height:18px}
@@ -120,7 +120,7 @@ nav button::before{display:none}
  .badge svg{transition:transform .3s var(--spring)}.check:hover .badge svg{transform:rotate(-8deg) scale(1.1)}
  .gTimer .num{transition:color .3s}.gNow{transition:background .4s}
  .todo input:checked{animation:facePop .3s var(--spring)}
- .brand svg{transition:transform .5s var(--spring)}.brand:hover svg{transform:rotate(-8deg)}
+ .brand svg,.brand .logo{transition:transform .5s var(--spring)}.brand:hover svg,.brand:hover .logo{transform:rotate(-8deg)}
 }
 @media (prefers-reduced-motion:no-preference){
  html{scroll-behavior:smooth}
@@ -386,7 +386,7 @@ nav button[aria-current="true"] svg{transform:translateY(-2px) scale(1.08)}
 
 </head><body><main>
   <div class="brand">
-    <svg class="logo" viewBox="60 26 80 76" aria-hidden="true"><defs><clipPath id="logoCup"><path d="M78 52h44l-3 26a14 14 0 0 1-14 12h-10a14 14 0 0 1-14-12z"/></clipPath></defs><ellipse cx="100" cy="94" rx="36" ry="5.5" fill="var(--surface)" stroke="var(--ink)" stroke-width="3"/><path d="M120 58c11-1 13 16 1 17" fill="none" stroke="var(--ink)" stroke-width="3.6" stroke-linecap="round"/><path d="M78 52h44l-3 26a14 14 0 0 1-14 12h-10a14 14 0 0 1-14-12z" fill="var(--surface)"/><g clip-path="url(#logoCup)"><rect x="60" y="56" width="80" height="36" fill="#3a2214"/><rect x="60" y="56" width="80" height="5" fill="#c8894a"/></g><path d="M78 52h44l-3 26a14 14 0 0 1-14 12h-10a14 14 0 0 1-14-12z" fill="none" stroke="var(--ink)" stroke-width="3.2" stroke-linejoin="round"/><g class="logoSteam" fill="none" stroke="var(--muted)" stroke-width="2.6" stroke-linecap="round"><path d="M93 45c-4-5 4-8 0-13"/><path d="M106 47c-4-5 4-8 0-13"/></g></svg>
+    <img class="logo" src="icon-v3-192.png" alt="" width="38" height="38">
     <h1>Café Lab</h1><button type="button" class="ghost whoBtn" id="whoBtn"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span id="whoName">Sign in</span></button><button type="button" class="ghost setupBtn" id="setupBtn" aria-label="Settings" title="Settings" ><svg class="ico cog" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><span id="setupLine"></span></button><div class="langWrap"><button type="button" class="ghost langBtn" id="langBtn" aria-label="Language: English (EN)" aria-controls="langMenu" aria-expanded="false"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span id="langCode">EN</span></button><div class="langMenu" id="langMenu" hidden><button type="button" data-lang="en" lang="en">English</button><button type="button" data-lang="pt" lang="pt">Português</button><button type="button" data-lang="nl" lang="nl">Nederlands</button></div></div>
   </div>
   <div class="modeSw" role="group" aria-label="Mode"><button type="button" data-mode="simple" aria-pressed="false"><svg class="ico" viewBox="0 0 24 24"><path d="M5 9h12v4a6 6 0 0 1-6 6h0a6 6 0 0 1-6-6z"/><path d="M17 11h2a2 2 0 0 1 0 4h-2"/></svg>Simple<span class="sub">any brewer</span></button><button type="button" data-mode="pro" aria-pressed="false"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 12l4-3"/></svg>Pro<span class="sub">espresso dial-in</span></button></div>
