@@ -184,10 +184,11 @@ function renderMenu(){
   const list=MENUS[S.role];if(!list.some(x=>x[0]===S.section))S.section=list[0][0];
   $("#menu").innerHTML=list.map(([k,l])=>`<button type="button" data-sec="${k}" aria-current="${k===S.section}">${l}</button>`).join("");
 }
+function lockView(){const v=$("#view");v.onchange=v.oninput=v.onclick=null;v.innerHTML=`<div class="panel"><h2>Manager PIN</h2><p class="hint">Enter the PIN to open the boss menu.</p><div class="row"><input id="pinIn" inputmode="numeric" style="flex:1;min-width:120px"><button class="btn" id="pinGo" type="button">Open</button></div><p class="hint badT" id="pinErr" hidden>Wrong PIN. Try again.</p></div>`;$("#pinGo").onclick=()=>{if($("#pinIn").value===S.pin){S.role="boss";S.section=null;go()}else $("#pinErr").hidden=false}}
 function go(){renderMenu();save();(VIEWS[S.section]||VIEWS.setup)();window.scrollTo(0,0)}
 document.addEventListener("click",e=>{
   const r=e.target.closest("[data-role]");
-  if(r){if(r.dataset.role==="boss"&&S.pin&&S.role!=="boss"){const p=prompt("Manager PIN");if(p!==S.pin)return}S.role=r.dataset.role;S.section=null;go();return}
+  if(r){if(r.dataset.role==="boss"&&S.pin&&S.role!=="boss"){lockView();return}S.role=r.dataset.role;S.section=null;go();return}
   const s=e.target.closest("[data-sec]");if(s){S.section=s.dataset.sec;go()}
 });
 const V=h=>{const v=$("#view");v.onchange=v.oninput=v.onclick=null;v.innerHTML=h};
@@ -207,6 +208,7 @@ VIEWS.setup=()=>{V(`<div class="panel"><h2>Café setup</h2><p class="hint">Set t
  sum();
  $("#cSave").onclick=()=>{S.cafe=$("#cName").value.trim();S.machine=$("#cMach").value;S.grinder=$("#cGrind").value;S.pin=$("#cPin").value.trim();save();sum();toast("Saved")};
 };
+function twice(b,fn){if(b.dataset.armed){fn();return}b.dataset.armed=1;const t=b.textContent;b.textContent="Tap again to confirm";setTimeout(()=>{if(b.isConnected){delete b.dataset.armed;b.textContent=t}},3000)}
 function toast(t){const d=document.createElement("div");d.textContent=t;d.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:99px;font-size:14px;z-index:50";document.body.appendChild(d);setTimeout(()=>d.remove(),1800)}
 
 VIEWS.staff=()=>{
@@ -218,7 +220,7 @@ VIEWS.staff=()=>{
  <div class="row"><input id="sName" placeholder="Barista name" style="flex:1;min-width:160px"><button class="btn" id="sAdd" type="button">Add</button></div></div>${rows||'<p class="hint">No staff yet.</p>'}`);
  $("#sAdd").onclick=()=>{const n=$("#sName").value.trim();if(n&&!S.staff.includes(n)){S.staff.push(n);save();VIEWS.staff()}};
  $("#view").onchange=e=>{const c=e.target.dataset.sign;if(!c)return;const[n,k]=c.split("|");(S.signoff[n]=S.signoff[n]||{})[k]=e.target.checked?"ok":"";save();VIEWS.staff()};
- $("#view").querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(confirm("Remove "+S.staff[b.dataset.del]+"?")){S.staff.splice(b.dataset.del,1);save();VIEWS.staff()}});
+ $("#view").querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>twice(b,()=>{S.staff.splice(b.dataset.del,1);save();VIEWS.staff()}));
 };
 
 VIEWS.path=()=>{
@@ -245,7 +247,7 @@ VIEWS.recipes=()=>{
  if(!boss)return;
  $("#view").onchange=e=>{const d=e.target.dataset.r;if(!d)return;const[i,k]=d.split("|");S.recipes[i][k]=["dose","yield","milk"].includes(k)?parseFloat(e.target.value)||0:e.target.value;save();VIEWS.recipes()};
  $("#rAdd").onclick=()=>{S.recipes.push({drink:"New drink",cup:"",dose:18,yield:36,time:"27–30 s",milk:0,notes:""});save();VIEWS.recipes()};
- $("#rReset").onclick=()=>{if(confirm("Reset recipes?")){S.recipes=DEF_RECIPES.map(r=>({...r}));save();VIEWS.recipes()}};
+ $("#rReset").onclick=e=>twice(e.target,()=>{S.recipes=DEF_RECIPES.map(r=>({...r}));save();VIEWS.recipes()});
  $("#view").querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{S.recipes.splice(b.dataset.rm,1);save();VIEWS.recipes()});
 };
 
