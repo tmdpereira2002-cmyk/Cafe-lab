@@ -1,0 +1,353 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f4ede6" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#1c1512" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Café Lab for Cafés: owner and trainee barista tools, coffee calculators and a commercial equipment guide.">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="favicon-v2-48.png" sizes="48x48"><link rel="apple-touch-icon" href="apple-touch-icon-v2.png">
+<title>Café Lab for Cafés</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+:root{--bg:#f4ede6;--surface:#fffaf4;--sunk:#efe5da;--ink:#2a1d16;--muted:#76645a;--line:#e2d4c7;--crema:#b8732a;--crema-soft:#f1dfc6;--on-crema:#fff8ef;--good:#3d7a4c;--warn:#c7950c;--bad:#c4472b;
+--display:"Fraunces",Georgia,serif;--body:"Work Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17110d;--surface:#211812;--sunk:#1a130e;--ink:#f2e6db;--muted:#ab968a;--line:#3a2c23;--crema:#e09a4a;--crema-soft:#3a2716;--on-crema:#1d120b;--good:#6cb67e;--warn:#e8bd3a;--bad:#ef7a5c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17110d;--surface:#211812;--sunk:#1a130e;--ink:#f2e6db;--muted:#ab968a;--line:#3a2c23;--crema:#e09a4a;--crema-soft:#3a2716;--on-crema:#1d120b;--good:#6cb67e;--warn:#e8bd3a;--bad:#ef7a5c;color-scheme:dark}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--body)}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px}
+.wrap{max-width:860px;margin:0 auto}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+h1{font:700 22px/1.2 var(--display);margin:0}h2{font:700 22px/1.25 var(--display);margin:0 0 6px}h3{font:600 17px/1.3 var(--body);margin:0 0 6px}
+main{padding:16px 16px 60px}
+a{color:var(--crema)}
+.hint{color:var(--muted);font-size:14px;margin:4px 0 10px}
+.seg{display:flex;background:var(--sunk);border-radius:12px;padding:4px;gap:4px}
+.seg button{flex:1;background:transparent;color:var(--muted);border:0;padding:8px 12px;border-radius:9px;font:600 15px var(--body);cursor:pointer;min-height:40px}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 4px rgba(40,20,10,.15)}
+.menu{display:flex;gap:6px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}.menu::-webkit-scrollbar{display:none}
+.menu button{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:7px 14px;font:500 14px var(--body);cursor:pointer;min-height:38px}
+.menu button[aria-current="true"]{background:var(--crema);border-color:var(--crema);color:var(--on-crema)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.field{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+input,select,textarea{font:16px var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 10px;min-height:42px;width:100%}
+.num{font-family:var(--mono)}
+button.btn{background:var(--crema);color:var(--on-crema);border:0;border-radius:12px;padding:10px 16px;font:600 15px var(--body);cursor:pointer;min-height:44px}
+button.ghost{background:transparent;color:var(--crema);border:1px solid var(--line);border-radius:12px;padding:8px 14px;font:600 14px var(--body);cursor:pointer;min-height:40px}
+.out{margin-top:12px;padding:12px;border-radius:12px;background:var(--crema-soft)}
+.big{font:700 26px/1.2 var(--mono)}
+.ok{color:var(--good)}.warnT{color:var(--warn)}.badT{color:var(--bad)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.spread{justify-content:space-between}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:600}
+.tableWrap{overflow-x:auto}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:var(--sunk);color:var(--muted);margin:2px 4px 2px 0}
+.tag.on{background:var(--crema-soft);color:var(--ink)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.card{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--bg);cursor:pointer;text-align:left;color:var(--ink);font:inherit}
+.card b{display:block}.card small{color:var(--muted)}
+.check{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line)}
+.check input{width:22px;height:22px;min-height:0;flex:none;margin-top:2px}
+.check .who{margin-left:auto;font-size:12px;color:var(--muted);white-space:nowrap}
+details summary{cursor:pointer;font-weight:600;padding:6px 0}
+.note{font-size:13px;color:var(--muted);border-left:3px solid var(--crema);padding-left:10px;margin:10px 0}
+.bar{height:8px;background:var(--sunk);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--good)}
+</style></head><body>
+<header><div class="wrap">
+  <div class="top"><h1>Café Lab <span style="color:var(--crema)">for Cafés</span></h1><a href="./" style="font-size:14px">Personal app →</a></div>
+  <div class="seg" role="group" aria-label="Who is using this" style="margin-top:10px"><button type="button" data-role="boss">Boss / manager</button><button type="button" data-role="trainee">Barista in training</button></div>
+  <nav class="menu" id="menu" aria-label="Sections"></nav>
+</div></header>
+<main class="wrap" id="view"></main>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=(n,d=1)=>isFinite(n)?(+n).toFixed(d):"–";
+const eur=n=>isFinite(n)?"€"+(+n).toFixed(2):"–";
+
+/* ---------- storage (this device only until café accounts sync) ---------- */
+const KEY="cafeWork";
+const DEF={role:"boss",section:null,pin:"",machine:"lm-linea-pb",grinder:"mk-e65s",cafe:"",staff:[],signoff:{},recipes:null,clean:{},costs:{},plan:{}};
+let S;try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){S={...DEF}}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+/* ---------- commercial equipment ---------- */
+// Feature keys shared by machines; FUNCS explains each one to trainees.
+const FUNCS={
+  vol:["Volumetric dosing","Programmed buttons stop the shot after a set amount of water (counted by a flowmeter). Set them once for the house recipe; check yield on a scale daily because grind and beans change it.","Program: hold the programming button, start the shot with the button you want, stop it at the right yield, release. The machine remembers the pulse count."],
+  manual:["Manual / continuous button","Starts and stops the shot by hand. Use it when dialling in with a scale, and for purging the group.","Press once to start, again to stop at your target weight."],
+  pid:["PID temperature control","Electronic control keeps brew water within about ±0.5 °C. Light roasts like it hotter (93–95 °C), dark roasts cooler (88–91 °C).","Change temperature in the service menu or display; wait 10 minutes after a change before judging taste."],
+  multi:["Independent group boilers","Each group has its own boiler, so two coffees on two groups can brew at different temperatures (e.g. house blend and guest single origin).","Label each group with the bean it is set for."],
+  hx:["Heat exchanger","Brew water is heated as it passes through the steam boiler. Cheaper and robust, but the group can run hot when idle.","Flush 2–3 s of water before each shot after the machine has stood idle."],
+  pre:["Pre-infusion","Wets the puck at low pressure before full pressure. Fewer channels, more even extraction, especially with fine light roasts.","Set the pre-infusion time (usually 2–8 s). Longer pre-infusion = slightly longer total shot time."],
+  profile:["Pressure / flow profiling","The barista or a stored program changes pressure or flow during the shot (e.g. soft start, 9 bar, taper to 6 bar).","Start with the factory flat 9 bar profile; change one stage at a time and compare taste."],
+  grav:["Gravimetric (scales in the drip tray)","Scales under the cup stop the shot at a target weight in grams instead of a water volume. Most consistent yield.","Tare happens automatically; keep the drip tray clean and dry or weights drift."],
+  timer:["Shot timer display","Shows the extraction time per group. Shot time is your fastest signal of grind drift.","Note the time with each check shot; aim for the house window, usually 25–32 s."],
+  autosteam:["Automatic milk steaming","A temperature probe in the wand stops steaming at a set temperature, and some machines also set texture (foam amount).","Set stop temperature 55–65 °C; still purge and wipe the wand after every jug."],
+  cool:["Cool-touch steam wands","Insulated wands stay cool so milk does not bake on. Faster cleaning, fewer burns.","Still purge before and after, and wipe with a dedicated damp cloth."],
+  water:["Hot water tap with mix","Delivers water for Americanos and tea; a mixing valve sets the temperature so it doesn't spit or scald.","Never use the hot-water tap to brew espresso drinks' water from the group."],
+  eco:["Eco / standby mode","Lowers boiler temperatures or switches off groups during quiet hours to save energy.","Program it to wake 30 minutes before opening."],
+  clean:["Automatic cleaning cycle","Runs the backflush program with a blind basket and detergent at the press of a button.","Daily at closing: blind basket + 1 tablet/scoop detergent per group, run the cycle, then rinse cycle without detergent."],
+  connect:["Telemetry / connectivity","Sends shot counts, errors and maintenance alerts to an app or the technician.","Owners can see shot counts per group and when filters/gaskets are due."],
+  bar:["Pump pressure & boiler gauges","Show brew pressure (aim ~9 bar while brewing) and steam boiler pressure (usually 1–1.5 bar).","If brew pressure drops or steam pressure is low, call the technician; don't adjust the pump yourself."],
+  warmer:["Cup warmer","Keeps cups warm so the espresso doesn't lose heat and crema when it hits the cup.","Store only clean, dry cups upside-down on the warmer."],
+  bean:["Built-in grinder and milk system (super-automatic)","Grinds, tamps, brews and textures milk by itself at the press of a drink button. The barista's job becomes setup, cleaning and quality checks.","Run the daily milk system clean and the brew unit clean; check one espresso on a scale every morning."]
+};
+const M=(id,name,brand,type,groups,feat,note)=>({id,name,brand,type,groups,feat,note});
+const MACHINES=[
+ M("lm-linea-pb","Linea PB","La Marzocco","Traditional, multi-boiler","2–4",["vol","manual","pid","pre","timer","water","eco","bar","warmer","clean"],"The café workhorse. Saturated groups with dual boilers; very stable temperature."),
+ M("lm-linea-classic","Linea Classic S","La Marzocco","Traditional, dual boiler","2–4",["vol","manual","pid","water","bar","warmer"],"Simple, robust update of the original Linea."),
+ M("lm-gb5","GB5 S","La Marzocco","Traditional, dual boiler","2–4",["vol","manual","pid","pre","timer","water","eco","bar","warmer","clean"],"Linea internals with a different body and display per group."),
+ M("lm-kb90","KB90","La Marzocco","Traditional, dual boiler","2–4",["vol","manual","pid","pre","timer","water","eco","bar","warmer","clean","cool"],"Straight-in portafilter and automatic flush between shots; built for high volume."),
+ M("lm-strada","Strada X","La Marzocco","Multi-boiler, profiling","2–3",["vol","manual","pid","multi","pre","profile","timer","water","bar","warmer","clean"],"Paddle or programmed flow profiling per group."),
+ M("va-eagle-one","Eagle One","Victoria Arduino","Multi-boiler, energy saving","2–3",["vol","manual","pid","multi","pre","timer","water","eco","warmer","clean","cool"],"Low-energy design (NEO system); compact, low profile."),
+ M("va-black-eagle","Black Eagle Maverick","Victoria Arduino","Multi-boiler, gravimetric","2–3",["vol","manual","pid","multi","pre","grav","timer","water","autosteam","eco","warmer","clean","cool","connect"],"Gravitech scales stop shots by weight. A favourite in competitions."),
+ M("ns-aurelia-wave","Aurelia Wave","Nuova Simonelli","Traditional, HX","2–3",["vol","manual","pid","pre","timer","water","autosteam","eco","bar","warmer","clean","cool"],"Soft-infusion and optional Easy Cream automatic milk; easy for new staff."),
+ M("ns-appia-life","Appia Life","Nuova Simonelli","Traditional, HX","1–3",["vol","manual","pre","water","eco","bar","warmer"],"Affordable, very common entry machine for small cafés."),
+ M("slayer-steam","Steam LP","Slayer","Multi-boiler, flow control","1–3",["vol","manual","pid","multi","pre","profile","timer","water","cool","eco","warmer"],"Needle-valve flow control for long, low-flow pre-brew."),
+ M("synesso-hydra","MVP Hydra","Synesso","Multi-boiler, pressure profiling","2–4",["vol","manual","pid","multi","pre","profile","timer","water","bar","warmer"],"Programmable pressure profiles per group; very temperature stable."),
+ M("kvdw-spirit","Spirit","Kees van der Westen","Multi-boiler, paddle profiling","2–3",["manual","pid","multi","pre","profile","timer","water","bar","warmer"],"Dutch-made; paddle lets the barista set pressure through the shot."),
+ M("sr-cafe-racer","Café Racer","Sanremo","Multi-boiler","2–4",["vol","manual","pid","multi","pre","timer","water","eco","bar","warmer","clean"],"Distinctive open-frame design, independent group temperatures."),
+ M("sr-opera","Opera 2.0","Sanremo","Multi-boiler, pressure profiling","2–3",["vol","manual","pid","multi","pre","profile","timer","water","eco","bar","warmer","clean"],"Variable-pressure profiles stored per button."),
+ M("cimbali-m200","M200","La Cimbali","Multi-boiler, profiling","2–3",["vol","manual","pid","multi","pre","profile","timer","water","autosteam","eco","warmer","clean","cool","connect"],"Top Cimbali; programmable profiles and Turbosteam milk."),
+ M("cimbali-m26","M26","La Cimbali","Traditional, HX","2–3",["vol","manual","pid","pre","timer","water","autosteam","eco","bar","warmer","clean","connect"],"Mid-range Cimbali with optional Turbosteam automatic wand."),
+ M("faema-e71e","E71E","Faema","Multi-boiler","2–3",["vol","manual","pid","multi","pre","profile","timer","water","autosteam","eco","warmer","clean","cool","connect"],"Programmable pressure; touch display per group."),
+ M("rancilio-classe11","Classe 11 USB","Rancilio","Traditional, HX","2–4",["vol","manual","pid","pre","timer","water","autosteam","eco","bar","warmer","clean","cool"],"Large touch display; iSteam automatic wand option."),
+ M("rancilio-classe5","Classe 5","Rancilio","Traditional, HX","1–3",["vol","manual","water","bar","warmer"],"Simple and very reliable; common in starter cafés."),
+ M("astoria-storm","Storm","Astoria","Multi-boiler","2–3",["vol","manual","pid","multi","pre","timer","water","autosteam","eco","warmer","clean","cool"],"Independent group temperatures and optional automatic milk."),
+ M("dallacorte-xt","XT","Dalla Corte","Multi-boiler","2–3",["vol","manual","pid","multi","pre","timer","water","eco","warmer","clean"],"Multi-boiler with per-group temperature and recipe settings."),
+ M("eversys-cameo","Cameo","Eversys","Super-automatic","1–2",["bean","vol","pid","autosteam","water","clean","connect"],"Super-automatic that rivals manual espresso in volume cafés and hotels."),
+ M("franke-a800","A800","Franke","Super-automatic","1",["bean","vol","pid","autosteam","water","clean","connect"],"Common in hotels, offices and petrol-station cafés."),
+ M("wmf-5000s","5000 S+","WMF","Super-automatic","1",["bean","vol","pid","autosteam","water","clean","connect"],"High-capacity super-automatic with self-cleaning milk system."),
+ M("thermoplan-bw4","Black&White4","Thermoplan","Super-automatic","1",["bean","vol","pid","autosteam","water","clean","connect"],"Known as the machine many large coffee chains use.")
+];
+const G=(id,name,brand,burr,adj,feat,note)=>({id,name,brand,burr,adj,feat,note});
+const GRINDERS=[
+ G("mk-e65s","E65S GbW","Mahlkönig","65 mm flat","Stepless dial with numbers",["Grind by weight","Display","Burr cooling fans"],"Doses by weight, not time; the most common specialty café grinder."),
+ G("mk-e80","E80 Supreme","Mahlkönig","80 mm flat","Stepless dial with numbers",["Time dosing","Display","Burr cooling"],"For busy bars: fast and cool-running."),
+ G("mk-ek43","EK43","Mahlkönig","98 mm flat","Stepless dial 0–16",["Single dose","Filter and espresso"],"The standard for filter and retail bean grinding; also used single-dose for espresso."),
+ G("mz-major","Major V","Mazzer","83 mm flat","Stepless collar",["Time dosing","Display"],"Robust high-volume Italian grinder."),
+ G("mz-robur","Robur S","Mazzer","71 mm conical","Stepless collar",["Time dosing","Display","Cooling fan"],"Conical burrs for very high volume, chocolatey cup."),
+ G("mz-kony","Kony S","Mazzer","63 mm conical","Stepless collar",["Time dosing","Display"],"Mid-volume conical grinder."),
+ G("anfim-pratica","Pratica","Anfim","75 mm flat","Micrometric stepless ring",["Time dosing","Display"],"Precise and quick; popular in specialty bars."),
+ G("va-mythos1","Mythos One (Clima Pro)","Victoria Arduino","75 mm flat","Stepless, knob",["Time dosing","Heated burr chamber (stable temperature)","Display"],"Keeps the burrs at constant temperature so grind drifts less through the day."),
+ G("va-mythos2","Mythos 2","Victoria Arduino","75 mm flat","Stepless, knob",["Grind by weight (gravimetric)","Heated burr chamber","Display"],"Gravimetric version that weighs each dose."),
+ G("eureka-atom75","Atom 75","Eureka","75 mm flat","Stepless micrometric",["Time dosing","Display","Quiet"],"Quiet; fits small cafés and coffee bars."),
+ G("fio-f64","F64 EVO","Fiorenzato","64 mm flat","Stepless micrometric",["Time dosing","Display"],"Very common, affordable café grinder."),
+ G("fio-f83","F83 E","Fiorenzato","83 mm flat","Stepless micrometric",["Time dosing","Display","Burr cooling fan"],"Large burrs for higher volume."),
+ G("compak-e8","E8","Compak","83 mm flat","Stepless micrometric",["Time dosing","Display"],"Spanish workhorse for high-volume bars."),
+ G("ceado-e37s","E37S","Ceado","83 mm flat","Stepless micrometric",["Time dosing","Display","Burr cooling"],"Fast, cool and low retention."),
+ G("ditting-807","807 Lab Sweet","Ditting","80 mm flat","Stepless dial",["Single dose","Filter and retail","Fast"],"Swiss; used for filter brewing and retail bags.")
+];
+const mach=()=>MACHINES.find(m=>m.id===S.machine)||MACHINES[0];
+const grind=()=>GRINDERS.find(g=>g.id===S.grinder)||GRINDERS[0];
+
+/* ---------- training and routines ---------- */
+const SKILLS=[
+ ["Safety & hygiene","Knows hot surfaces, steam and chemical safety; washes hands; allergens (milk types)"],
+ ["Machine start-up","Opening routine done alone: flush groups, check gauges, warm cups"],
+ ["Grinder basics","Knows which way is finer/coarser and how much to move it"],
+ ["Dose and distribute","Hits the house dose ±0.2 g; even distribution; level tamp"],
+ ["Pull a balanced shot alone","Within the house ratio and time window, tastes balanced"],
+ ["Dial in the morning","Adjusts the grinder from a check shot with the scale"],
+ ["Taste: sour vs bitter","Can tell under- from over-extraction and say the fix"],
+ ["Steam milk: silky microfoam","Flat white texture, 55–65 °C, no big bubbles"],
+ ["Steam milk: cappuccino foam","Thicker foam, holds shape"],
+ ["Plant-milk steaming","Oat/soy without splitting or overheating"],
+ ["Latte art: heart","Centred heart, good contrast"],
+ ["Latte art: tulip / rosetta","Clean layered pattern"],
+ ["Full house menu from memory","Every drink, size and recipe"],
+ ["Speed: 2 drinks in 3 min","Two milk drinks to standard during rush"],
+ ["Closing & cleaning alone","Backflush, wands, grinder, drip trays, floors"],
+ ["Explain the coffee to a customer","Origin, taste and why we brew it like this"]
+];
+const ROUTINES={
+ open:["Turn on machine 30 min before opening (or check eco wake)","Check boiler and pump gauges","Flush each group 5 s, insert clean portafilters","Fill grinder hopper; purge 1–2 doses","Pull check shot: weigh dose, yield and time; adjust grind","Taste and log the check shot","Fill milk fridge, check dates","Stock cups, lids, sugar, napkins"],
+ hourly:["Purge and wipe wands after every jug","Flush group before every shot","Wipe portafilter dry before dosing","Empty knock box","Re-check shot time after a rush or bean change"],
+ close:["Backflush every group with detergent (cleaning cycle)","Rinse backflush without detergent","Soak portafilters and baskets in cleaner","Soak steam wand tips; clear wand holes","Brush grinder chute, empty and vacuum hopper if beans change tomorrow","Clean drip trays and grids","Wipe machine body; leave group heads clean","Turn off or set eco mode"],
+ weekly:["Remove and scrub shower screens and dispersion plates","Check group gaskets (replace every 3–6 months)","Deep-clean grinder burrs with grinder cleaner","Descale kettle / clean hot-water tap","Check water filter capacity and date"]
+};
+const DEF_RECIPES=[
+ {drink:"Espresso",cup:"60 ml",dose:18,yield:36,time:"27–30 s",milk:0,notes:"Double shot"},
+ {drink:"Americano",cup:"240 ml",dose:18,yield:36,time:"27–30 s",milk:0,notes:"Hot water first, espresso on top"},
+ {drink:"Cappuccino",cup:"180 ml",dose:18,yield:36,time:"27–30 s",milk:130,notes:"1–1.5 cm foam"},
+ {drink:"Flat white",cup:"160 ml",dose:18,yield:40,time:"27–30 s",milk:110,notes:"Thin silky foam"},
+ {drink:"Latte",cup:"300 ml",dose:18,yield:36,time:"27–30 s",milk:240,notes:"1 cm foam"}
+];
+if(!S.recipes)S.recipes=DEF_RECIPES.map(r=>({...r}));
+
+/* ---------- menus ---------- */
+const MENUS={
+ boss:[["setup","Café setup"],["staff","Staff training"],["recipes","House recipes"],["cost","Drink cost & margin"],["order","Order planner"],["breakeven","Break-even"],["routine","Cleaning & routines"],["tools","Barista calculators"],["gear","Equipment guide"]],
+ trainee:[["path","My training"],["machine","Our machine"],["grinder","Our grinder"],["tools","Calculators"],["recipes","House recipes"],["routine","Daily routines"],["gear","Equipment guide"]]
+};
+function renderMenu(){
+  document.querySelectorAll("[data-role]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.role===S.role));
+  const list=MENUS[S.role];if(!list.some(x=>x[0]===S.section))S.section=list[0][0];
+  $("#menu").innerHTML=list.map(([k,l])=>`<button type="button" data-sec="${k}" aria-current="${k===S.section}">${l}</button>`).join("");
+}
+function go(){renderMenu();save();(VIEWS[S.section]||VIEWS.setup)();window.scrollTo(0,0)}
+document.addEventListener("click",e=>{
+  const r=e.target.closest("[data-role]");
+  if(r){if(r.dataset.role==="boss"&&S.pin&&S.role!=="boss"){const p=prompt("Manager PIN");if(p!==S.pin)return}S.role=r.dataset.role;S.section=null;go();return}
+  const s=e.target.closest("[data-sec]");if(s){S.section=s.dataset.sec;go()}
+});
+const V=h=>{const v=$("#view");v.onchange=v.oninput=v.onclick=null;v.innerHTML=h};
+const opt=(arr,sel)=>arr.map(x=>`<option value="${x.id}"${x.id===sel?" selected":""}>${esc(x.brand+" "+x.name)}</option>`).join("");
+
+/* ---------- views ---------- */
+const VIEWS={};
+VIEWS.setup=()=>{V(`<div class="panel"><h2>Café setup</h2><p class="hint">Set the café's gear once. Trainees then see guides for exactly this machine and grinder.</p>
+ <div class="grid"><label class="field"><span>Café name</span><input id="cName" value="${esc(S.cafe)}" placeholder="e.g. Koffie Hoek"></label>
+ <label class="field"><span>Espresso machine</span><select id="cMach">${opt(MACHINES,S.machine)}</select></label>
+ <label class="field"><span>Espresso grinder</span><select id="cGrind">${opt(GRINDERS,S.grinder)}</select></label>
+ <label class="field"><span>Manager PIN (optional)</span><input id="cPin" inputmode="numeric" maxlength="6" value="${esc(S.pin)}" placeholder="none"></label></div>
+ <p class="note">The PIN only stops a trainee opening the boss menu on a shared tablet. It is not real security: café accounts with proper sign-in come with the paid version.</p>
+ <button class="btn" id="cSave" type="button">Save setup</button></div>
+ <div class="panel" id="cSum"></div>`);
+ const sum=()=>{const m=mach(),g=grind();$("#cSum").innerHTML=`<h3>${esc(S.cafe||"Your café")}</h3><p><b>${esc(m.brand+" "+m.name)}</b> · ${esc(m.type)} · ${m.groups} groups<br><small class="hint">${esc(m.note)}</small></p><div>${m.feat.map(f=>`<span class="tag on">${FUNCS[f][0]}</span>`).join("")}</div><p style="margin-top:10px"><b>${esc(g.brand+" "+g.name)}</b> · ${g.burr} · ${esc(g.adj)}<br><small class="hint">${esc(g.note)}</small></p>`};
+ sum();
+ $("#cSave").onclick=()=>{S.cafe=$("#cName").value.trim();S.machine=$("#cMach").value;S.grinder=$("#cGrind").value;S.pin=$("#cPin").value.trim();save();sum();toast("Saved")};
+};
+function toast(t){const d=document.createElement("div");d.textContent=t;d.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:99px;font-size:14px;z-index:50";document.body.appendChild(d);setTimeout(()=>d.remove(),1800)}
+
+VIEWS.staff=()=>{
+ const rows=S.staff.map((n,i)=>{const done=SKILLS.filter((_,k)=>(S.signoff[n]||{})[k]==="ok").length,ask=SKILLS.filter((_,k)=>(S.signoff[n]||{})[k]==="ask").length;
+   return `<div class="panel"><div class="row spread"><h3>${esc(n)}</h3><button class="ghost" data-del="${i}" type="button">Remove</button></div>
+   <div class="bar"><i style="width:${done/SKILLS.length*100}%"></i></div><p class="hint">${done}/${SKILLS.length} skills signed off${ask?` · <b class="warnT">${ask} waiting for your sign-off</b>`:""}</p>
+   <details${ask?" open":""}><summary>Skills</summary>${SKILLS.map(([t,d],k)=>{const st=(S.signoff[n]||{})[k];return `<label class="check"><input type="checkbox" data-sign="${esc(n)}|${k}"${st==="ok"?" checked":""}><span><b>${t}</b><br><small class="hint">${d}</small></span><span class="who">${st==="ok"?"✓ signed off":st==="ask"?"<b class='warnT'>asks sign-off</b>":""}</span></label>`}).join("")}</details></div>`}).join("");
+ V(`<div class="panel"><h2>Staff training</h2><p class="hint">Add your baristas. When a trainee marks a skill "ready", it shows here for you to sign off after watching them do it.</p>
+ <div class="row"><input id="sName" placeholder="Barista name" style="flex:1;min-width:160px"><button class="btn" id="sAdd" type="button">Add</button></div></div>${rows||'<p class="hint">No staff yet.</p>'}`);
+ $("#sAdd").onclick=()=>{const n=$("#sName").value.trim();if(n&&!S.staff.includes(n)){S.staff.push(n);save();VIEWS.staff()}};
+ $("#view").onchange=e=>{const c=e.target.dataset.sign;if(!c)return;const[n,k]=c.split("|");(S.signoff[n]=S.signoff[n]||{})[k]=e.target.checked?"ok":"";save();VIEWS.staff()};
+ $("#view").querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(confirm("Remove "+S.staff[b.dataset.del]+"?")){S.staff.splice(b.dataset.del,1);save();VIEWS.staff()}});
+};
+
+VIEWS.path=()=>{
+ const me=S.me&&S.staff.includes(S.me)?S.me:"";
+ V(`<div class="panel"><h2>My training</h2><p class="hint">Pick your name (your manager adds you). Mark a skill "ready" when you can do it alone; your manager signs it off after watching.</p>
+ <select id="me"><option value="">— choose your name —</option>${S.staff.map(n=>`<option${n===me?" selected":""}>${esc(n)}</option>`).join("")}</select>
+ ${S.staff.length?"":'<p class="note">No staff added yet. Ask your manager to add you under Boss → Staff training.</p>'}</div>
+ <div id="mySkills"></div>`);
+ $("#me").onchange=e=>{S.me=e.target.value;save();VIEWS.path()};
+ if(!me)return;
+ const st=S.signoff[me]||{},done=SKILLS.filter((_,k)=>st[k]==="ok").length,next=SKILLS.findIndex((_,k)=>st[k]!=="ok");
+ $("#mySkills").innerHTML=`<div class="panel"><div class="bar"><i style="width:${done/SKILLS.length*100}%"></i></div><p class="hint">${done} of ${SKILLS.length} signed off${next>=0?` · next up: <b>${SKILLS[next][0]}</b>`:" · fully trained!"}</p>
+ ${SKILLS.map(([t,d],k)=>`<div class="check"><span style="width:22px;flex:none">${st[k]==="ok"?"✅":st[k]==="ask"?"⏳":"○"}</span><span><b>${t}</b><br><small class="hint">${d}</small></span><span class="who">${st[k]==="ok"?"signed off":`<button class="ghost" type="button" data-ask="${k}">${st[k]==="ask"?"Undo":"I'm ready"}</button>`}</span></div>`).join("")}</div>`;
+ $("#mySkills").querySelectorAll("[data-ask]").forEach(b=>b.onclick=()=>{const k=b.dataset.ask;(S.signoff[me]=S.signoff[me]||{})[k]=st[k]==="ask"?"":"ask";save();VIEWS.path()});
+};
+
+VIEWS.recipes=()=>{
+ const boss=S.role==="boss";
+ const cell=(r,i,k,num)=>boss?`<input data-r="${i}|${k}" value="${esc(r[k])}"${num?' class="num" inputmode="decimal" style="width:70px"':""}>`:esc(r[k]);
+ V(`<div class="panel"><h2>House recipes</h2><p class="hint">${boss?"Edit the café's standard. Trainees see this as read-only.":"Our café's standard. Weigh every shot until these feel automatic."}</p>
+ <div class="tableWrap"><table><tr><th>Drink</th><th>Cup</th><th>Dose g</th><th>Yield g</th><th>Ratio</th><th>Time</th><th>Milk ml</th><th>Notes</th>${boss?"<th></th>":""}</tr>
+ ${S.recipes.map((r,i)=>`<tr><td>${cell(r,i,"drink")}</td><td>${cell(r,i,"cup")}</td><td>${cell(r,i,"dose",1)}</td><td>${cell(r,i,"yield",1)}</td><td class="num">1:${fmt(r.yield/r.dose)}</td><td>${cell(r,i,"time")}</td><td>${cell(r,i,"milk",1)}</td><td>${cell(r,i,"notes")}</td>${boss?`<td><button class="ghost" data-rm="${i}" type="button">✕</button></td>`:""}</tr>`).join("")}
+ </table></div>${boss?'<div class="row" style="margin-top:10px"><button class="btn" id="rAdd" type="button">Add drink</button><button class="ghost" id="rReset" type="button">Reset to defaults</button></div>':""}</div>`);
+ if(!boss)return;
+ $("#view").onchange=e=>{const d=e.target.dataset.r;if(!d)return;const[i,k]=d.split("|");S.recipes[i][k]=["dose","yield","milk"].includes(k)?parseFloat(e.target.value)||0:e.target.value;save();VIEWS.recipes()};
+ $("#rAdd").onclick=()=>{S.recipes.push({drink:"New drink",cup:"",dose:18,yield:36,time:"27–30 s",milk:0,notes:""});save();VIEWS.recipes()};
+ $("#rReset").onclick=()=>{if(confirm("Reset recipes?")){S.recipes=DEF_RECIPES.map(r=>({...r}));save();VIEWS.recipes()}};
+ $("#view").querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{S.recipes.splice(b.dataset.rm,1);save();VIEWS.recipes()});
+};
+
+/* calculator helper: fields → compute → output */
+function calc(id,title,hint,fields,fn){
+ return `<div class="panel" id="${id}"><h3>${title}</h3><p class="hint">${hint}</p><div class="grid">${fields.map(([k,l,v,o])=>`<label class="field"><span>${l}</span>${o?`<select data-k="${k}">${o.map(x=>`<option value="${x[0]}"${x[0]==v?" selected":""}>${x[1]}</option>`).join("")}</select>`:`<input data-k="${k}" class="num" inputmode="decimal" value="${v}">`}</label>`).join("")}</div><div class="out" data-out></div></div>`;
+}
+const CALCS={};
+function wire(){Object.keys(CALCS).forEach(id=>{const el=document.getElementById(id);if(!el)return;const run=()=>{const v={};el.querySelectorAll("[data-k]").forEach(i=>{v[i.dataset.k]=i.tagName==="SELECT"?i.value:parseFloat(String(i.value).replace(",","."))});(S.costs[id]=S.costs[id]||{});el.querySelectorAll("[data-k]").forEach(i=>S.costs[id][i.dataset.k]=i.value);save();el.querySelector("[data-out]").innerHTML=CALCS[id](v)};el.addEventListener("input",run);run()})}
+const sv=(id,k,d)=>(S.costs[id]&&S.costs[id][k]!=null)?S.costs[id][k]:d;
+
+function toolsHTML(){
+ const g=grind();
+ CALCS.ratio=v=>{let{dose,yield:y,ratio}=v;let msg="";
+   if(isFinite(dose)&&isFinite(ratio)&&!isFinite(y))y=dose*ratio;
+   const r=y/dose;const c=r<1.5?"Ristretto":r<=2.5?"Espresso":r<=3.2?"Lungo":"Long / split shot";
+   return `<span class="big">${isFinite(y)?fmt(y)+" g":"–"}</span> out · ratio <b>1:${fmt(r)}</b> · ${c}<br><small>Leave "Yield" empty to calculate it from dose × ratio.</small>`};
+ CALCS.ey=v=>{const ey=v.tds*v.bev/v.dose;const st=ey<18?["under-extracted: grind finer or run longer","warnT"]:ey>22?["over-extracted: grind coarser or shorter","badT"]:["in the 18–22 % ideal range","ok"];
+   return `<span class="big">${fmt(ey)} %</span> extraction yield — <b class="${st[1]}">${st[0]}</b><br><small>Strength ${fmt(v.tds,2)} % TDS (espresso 8–12 %, filter 1.15–1.45 %).</small>`};
+ CALCS.gstep=v=>{const diff=v.target-v.actual;if(!isFinite(diff))return"–";if(Math.abs(diff)<1.5)return`<b class="ok">On target.</b> Leave the grinder.`;const steps=Math.abs(diff)/v.sps;
+   return `Shot ran <b>${fmt(Math.abs(diff),0)} s ${diff>0?"fast":"slow"}</b> → go <b>${diff>0?"finer":"coarser"}</b> by about <span class="big">${fmt(steps,1)}</span> step(s) on the ${esc(g.brand+" "+g.name)}.<br><small>${esc(g.adj)}. Move it a little, purge one dose, and pull another check shot.</small>`};
+ CALCS.fresh=v=>{const d=Math.floor((Date.now()-new Date(v.date))/864e5);if(!isFinite(d))return"Enter the roast date.";
+   const st=d<v.rest?[`Resting — best from day ${v.rest} (in ${v.rest-d} days)`,"warnT"]:d<=v.rest+28?["In its best window","ok"]:d<=v.rest+56?["Still fine; flavours fading","warnT"]:["Past its best","badT"];
+   return `<span class="big">${d}</span> days off roast — <b class="${st[1]}">${st[0]}</b>`};
+ CALCS.batch=v=>{const coffee=v.litres*1000/v.ratio;return `<span class="big">${fmt(coffee,0)} g</span> ground coffee for ${fmt(v.litres,1)} L water at 1:${v.ratio}<br><small>≈ ${fmt(v.litres*1000*0.9/v.cup,0)} cups of ${v.cup} ml (about 10 % of water stays in the grounds). Hold batch brew max 30–45 min.</small>`};
+ CALCS.milk=v=>{const per=v.size*(1+v.foam/100);const jug=[350,600,750,1000].find(j=>j>=v.cups*v.size*1.3)||1000;
+   return `Pour about <span class="big">${fmt(v.cups*v.size,0)} ml</span> cold milk for ${v.cups} drink(s); it grows to ≈ ${fmt(v.cups*per,0)} ml.<br>Use a <b>${jug} ml</b> jug (fill to the bottom of the spout).<br><small>Stop at 55–65 °C — too hot to hold for more than 2 s. Never re-steam milk.</small>`};
+ CALCS.temp=v=>`<span class="big">${fmt(v.c*9/5+32,0)} °F</span> = ${fmt(v.c,0)} °C<br><small>Brew water 90–96 °C · steamed milk 55–65 °C · hot water for Americano 80–90 °C.</small>`;
+ return `<h2>Calculators</h2><p class="hint">Quick numbers for behind the bar.</p>`+
+ calc("ratio","Brew ratio","Dose in, yield out. Ratio = yield ÷ dose.",[["dose","Dose (g)",sv("ratio","dose",18)],["yield","Yield (g)",sv("ratio","yield",36)],["ratio","Ratio (1:x)",sv("ratio","ratio",2)]])+
+ calc("gstep","Grind change","How far to turn the grinder from a check shot.",[["target","Target time (s)",sv("gstep","target",28)],["actual","Shot took (s)",sv("gstep","actual",22)],["sps","Seconds per step",sv("gstep","sps",2)]])+
+ calc("ey","Extraction yield (refractometer)","EY % = TDS % × beverage weight ÷ dose.",[["dose","Dose (g)",sv("ey","dose",18)],["bev","Beverage (g)",sv("ey","bev",36)],["tds","TDS (%)",sv("ey","tds",9.5)]])+
+ calc("fresh","Bean freshness","How long since roasting.",[["date","Roast date (YYYY-MM-DD)",sv("fresh","date",new Date(Date.now()-10*864e5).toISOString().slice(0,10))],["rest","Rest days (espresso 7–14)",sv("fresh","rest",7)]])+
+ calc("batch","Batch brew / filter","Coffee needed for a batch.",[["litres","Water (L)",sv("batch","litres",2)],["ratio","Ratio 1:x",sv("batch","ratio",16)],["cup","Cup size (ml)",sv("batch","cup",240)]])+
+ calc("milk","Milk for the jug","Pour the right amount, waste less.",[["cups","Drinks",sv("milk","cups",2)],["size","Milk per drink (ml)",sv("milk","size",130)],["foam","Foam growth %",sv("milk","foam",30),[[15,"Flat white ~15 %"],[30,"Latte ~30 %"],[50,"Cappuccino ~50 %"]]]])+
+ calc("temp","°C ↔ °F","For manuals from other countries.",[["c","Celsius",sv("temp","c",93)]]);
+}
+VIEWS.tools=()=>{V(toolsHTML());wire()};
+
+VIEWS.cost=()=>{
+ CALCS.cost=v=>{const bean=v.bag/(v.kg*1000)*v.dose*(1+v.waste/100),milk=v.milkL/1000*v.ml*(1+v.waste/100),cost=bean+milk+v.cup,net=v.price/(1+v.vat/100),gp=net-cost,pct=gp/net*100,cls=pct>=70?"ok":pct>=60?"warnT":"badT";
+   return `Cost per drink <span class="big">${eur(cost)}</span><br>coffee ${eur(bean)} · milk ${eur(milk)} · cup/lid/sugar ${eur(v.cup)}<br>Price excl. VAT ${eur(net)} → gross profit <b>${eur(gp)}</b> = <b class="${cls}">${fmt(pct,0)} % margin</b><br><small>Cafés usually aim for 70–80 % gross margin on coffee. For ${fmt(70,0)} % you'd charge ≥ ${eur(cost/0.3*(1+v.vat/100))} incl. VAT.</small>`};
+ V(`<h2>Drink cost & margin</h2><p class="hint">What one drink really costs you, and what you keep.</p>`+
+ calc("cost","Per drink",`NL: coffee served in a café is 9 % BTW (low rate); check with your accountant.`,[["bag","Beans: bag price €",sv("cost","bag",28)],["kg","Bag size (kg)",sv("cost","kg",1)],["dose","Dose per drink (g)",sv("cost","dose",18)],["milkL","Milk € per litre",sv("cost","milkL",1.3)],["ml","Milk per drink (ml)",sv("cost","ml",180)],["waste","Waste %",sv("cost","waste",8)],["cup","Cup/lid/extras €",sv("cost","cup",0.12)],["price","Menu price incl. VAT €",sv("cost","price",3.8)],["vat","VAT %",sv("cost","vat",9)]])+
+ `<div class="panel"><h3>Your menu at a glance</h3><p class="hint">Uses the bean, milk and cup prices above with each house recipe.</p><div id="menuCost"></div></div>`);
+ wire();
+ const mc=()=>{const c=S.costs.cost||{},n=k=>parseFloat(String(c[k]).replace(",","."))||0;
+   $("#menuCost").innerHTML=`<div class="tableWrap"><table><tr><th>Drink</th><th>Cost</th><th>Price for 75 % margin (incl. VAT)</th></tr>${S.recipes.map(r=>{const cost=n("bag")/(n("kg")*1000)*r.dose*(1+n("waste")/100)+n("milkL")/1000*r.milk*(1+n("waste")/100)+n("cup");return`<tr><td>${esc(r.drink)}</td><td class="num">${eur(cost)}</td><td class="num">${eur(cost/0.25*(1+n("vat")/100))}</td></tr>`}).join("")}</table></div>`};
+ mc();$("#cost").addEventListener("input",mc);
+};
+
+VIEWS.order=()=>{
+ const p=S.plan;
+ V(`<h2>Order planner</h2><p class="hint">Average drinks per day → beans and milk to order.</p><div class="panel"><div class="grid">
+ ${S.recipes.map((r,i)=>`<label class="field"><span>${esc(r.drink)} / day</span><input class="num" inputmode="numeric" data-p="${i}" value="${p[i]??(i<2?40:25)}"></label>`).join("")}
+ <label class="field"><span>Open days / week</span><input class="num" id="oDays" value="${p.days??6}"></label><label class="field"><span>Order covers (days)</span><input class="num" id="oCover" value="${p.cover??7}"></label><label class="field"><span>Safety buffer %</span><input class="num" id="oBuf" value="${p.buf??15}"></label></div><div class="out" id="oOut"></div></div>`);
+ const run=()=>{S.recipes.forEach((_,i)=>p[i]=parseFloat($(`[data-p="${i}"]`).value)||0);p.days=+$("#oDays").value||6;p.cover=+$("#oCover").value||7;p.buf=+$("#oBuf").value||0;save();
+   let g=0,ml=0,n=0;S.recipes.forEach((r,i)=>{g+=p[i]*r.dose*1.08;ml+=p[i]*r.milk*1.1;n+=p[i]});const f=(1+p.buf/100)*p.cover;
+   $("#oOut").innerHTML=`Per day: <b>${n}</b> drinks · <b>${fmt(g/1000,2)} kg</b> beans · <b>${fmt(ml/1000,1)} L</b> milk<br>Order for ${p.cover} days: <span class="big">${fmt(g*f/1000,1)} kg</span> beans · <span class="big">${fmt(ml*f/1000,0)} L</span> milk<br>Per week (${p.days} days): ${fmt(g*p.days/1000,1)} kg beans<br><small>Includes 8 % coffee waste (purges, dial-in) and 10 % milk waste. Order beans so they arrive 5–7 days after roasting.</small>`};
+ $("#view").oninput=run;run();
+};
+
+VIEWS.breakeven=()=>{
+ CALCS.be=v=>{const fixed=v.rent+v.staff+v.other+v.lease,perCup=v.avg/(1+v.vat/100)-v.cost,cups=fixed/perCup,day=cups/v.days;
+   return `Monthly fixed costs <b>${eur(fixed)}</b> · profit per drink ${eur(perCup)}<br>Break-even: <span class="big">${fmt(cups,0)}</span> drinks / month ≈ <span class="big">${fmt(day,0)}</span> per open day<br><small>Everything above that is profit before tax. Machine lease or loan counts as fixed cost.</small>`};
+ V(`<h2>Break-even</h2><p class="hint">How many drinks a day pay the bills.</p>`+calc("be","Monthly",`Rough figures are fine.`,[["rent","Rent €",sv("be","rent",2500)],["staff","Staff wages €",sv("be","staff",6000)],["other","Energy, water, insurance, other €",sv("be","other",1200)],["lease","Machine & grinder lease/loan €",sv("be","lease",350)],["avg","Average drink price incl. VAT €",sv("be","avg",3.9)],["vat","VAT %",sv("be","vat",9)],["cost","Avg cost per drink €",sv("be","cost",0.75)],["days","Open days / month",sv("be","days",26)]]));
+ wire();
+};
+
+VIEWS.routine=()=>{
+ const today=new Date().toISOString().slice(0,10);if(S.clean.day!==today)S.clean={day:today};
+ const names={open:"Opening",hourly:"During service",close:"Closing",weekly:"Weekly"};
+ V(`<h2>${S.role==="boss"?"Cleaning & routines":"Daily routines"}</h2><p class="hint">Tick as you go. Resets every day. ${S.role==="boss"?"Print or put this on the bar tablet.":""}</p>`+
+ Object.entries(ROUTINES).map(([k,list])=>{const d=list.filter((_,i)=>S.clean[k+i]).length;return `<div class="panel"><div class="row spread"><h3>${names[k]}</h3><span class="hint">${d}/${list.length}</span></div>${list.map((t,i)=>`<label class="check"><input type="checkbox" data-c="${k+i}"${S.clean[k+i]?" checked":""}><span>${t}</span></label>`).join("")}</div>`}).join(""));
+ $("#view").onchange=e=>{const c=e.target.dataset.c;if(c){S.clean[c]=e.target.checked;save();VIEWS.routine()}};
+};
+
+VIEWS.machine=()=>{const m=mach();
+ V(`<div class="panel"><h2>${esc(m.brand+" "+m.name)}</h2><p class="hint">${esc(m.type)} · ${m.groups} groups. ${esc(m.note)}</p>${S.role==="trainee"&&!S.cafe?'<p class="note">Your manager hasn\'t set the café\'s machine yet; this is the default.</p>':""}</div>
+ <h3>What this machine does — and how to use it</h3>${m.feat.map(f=>`<div class="panel"><h3>${FUNCS[f][0]}</h3><p>${FUNCS[f][1]}</p><p class="note"><b>How:</b> ${FUNCS[f][2]}</p></div>`).join("")}
+ <details class="panel"><summary>Functions this machine doesn't have</summary>${Object.keys(FUNCS).filter(f=>!m.feat.includes(f)).map(f=>`<p><b>${FUNCS[f][0]}</b> — ${FUNCS[f][1]}</p>`).join("")}</details>
+ <p class="hint">Exact buttons differ per model year. Keep the manufacturer's manual by the machine.</p>`)};
+
+VIEWS.grinder=()=>{const g=grind();
+ V(`<div class="panel"><h2>${esc(g.brand+" "+g.name)}</h2><p class="hint">${g.burr} burrs · ${esc(g.adj)}</p><p>${esc(g.note)}</p><div>${g.feat.map(f=>`<span class="tag on">${esc(f)}</span>`).join("")}</div></div>
+ <div class="panel"><h3>How to adjust</h3><ul><li><b>Shot too fast / sour</b> → grind <b>finer</b>. <b>Too slow / bitter</b> → <b>coarser</b>.</li><li>Move in small steps; ${/stepless/i.test(g.adj)?"on a stepless grinder a tiny turn is enough (a few mm on the dial)":"one number at a time"}.</li><li>After every change, purge one dose (the old grind is still in the chute) before the next check shot.</li><li>Adjust ${/stepless/i.test(g.adj)?"while the motor runs, so beans don't jam between the burrs":"as the manual says"}.</li>${g.feat.some(f=>/weight/i.test(f))?"<li>Grind-by-weight: set the dose in grams; recheck on a scale weekly.</li>":g.feat.some(f=>/Time/.test(f))?"<li>Time dosing: when you go finer, the dose drops — weigh it and add a little time.</li>":""}</ul></div>
+ <div class="panel"><h3>Dose check</h3><p class="hint">Weigh three doses in a row. They should be within ±0.2 g of the house dose.</p></div>`)};
+
+VIEWS.gear=()=>{
+ V(`<h2>Commercial equipment guide</h2><p class="hint">The 25 espresso machines and 15 grinders you meet most in cafés, and what each can do. Tap one for details.</p>
+ <input id="gq" type="search" placeholder="Search, e.g. La Marzocco, gravimetric" style="margin-bottom:12px">
+ <h3>Espresso machines (${MACHINES.length})</h3><div class="cards" id="gm"></div>
+ <h3 style="margin-top:16px">Grinders (${GRINDERS.length})</h3><div class="cards" id="gg"></div>
+ <div class="panel" style="margin-top:16px"><h3>All machine functions explained</h3>${Object.values(FUNCS).map(f=>`<details><summary>${f[0]}</summary><p>${f[1]}</p><p class="note">${f[2]}</p></details>`).join("")}</div>
+ <p class="hint">Features listed are for typical current versions; options vary by year and configuration — check with your dealer.</p>`);
+ const draw=()=>{const q=$("#gq").value.toLowerCase();
+   $("#gm").innerHTML=MACHINES.filter(m=>(m.brand+" "+m.name+" "+m.type+" "+m.feat.map(f=>FUNCS[f][0]).join(" ")).toLowerCase().includes(q)).map(m=>`<details class="card"><summary><b>${esc(m.brand)} ${esc(m.name)}</b><small>${esc(m.type)} · ${m.groups} groups</small></summary><p style="font-size:14px">${esc(m.note)}</p>${m.feat.map(f=>`<span class="tag on">${FUNCS[f][0]}</span>`).join("")}${S.role==="boss"?`<p><button class="ghost" type="button" data-usem="${m.id}">Use in my café</button></p>`:""}</details>`).join("");
+   $("#gg").innerHTML=GRINDERS.filter(g=>(g.brand+" "+g.name+" "+g.burr+" "+g.feat.join(" ")).toLowerCase().includes(q)).map(g=>`<details class="card"><summary><b>${esc(g.brand)} ${esc(g.name)}</b><small>${g.burr} · ${esc(g.adj)}</small></summary><p style="font-size:14px">${esc(g.note)}</p>${g.feat.map(f=>`<span class="tag on">${esc(f)}</span>`).join("")}${S.role==="boss"?`<p><button class="ghost" type="button" data-useg="${g.id}">Use in my café</button></p>`:""}</details>`).join("")};
+ $("#gq").oninput=draw;draw();
+ $("#view").onclick=e=>{const a=e.target.dataset;if(a.usem){S.machine=a.usem;save();toast("Machine set")}if(a.useg){S.grinder=a.useg;save();toast("Grinder set")}};
+};
+
+go();
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script></body></html>
