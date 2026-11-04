@@ -5,7 +5,7 @@
 <link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Café Lab"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="config.js"></script><script src="fb.js" defer></script>
-<style>.installBox{display:flex;flex-direction:column;gap:6px;margin:6px 0}.offlineBar{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 8px);z-index:40;background:var(--ink);color:var(--bg);font-size:13px;padding:6px 12px;border-radius:99px;box-shadow:0 6px 18px -8px rgba(0,0,0,.5);max-width:calc(100% - 32px);text-align:center}</style>
+<style>.installBox{display:flex;flex-direction:column;gap:6px;margin:6px 0}.offlineBar{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 8px);z-index:40;background:var(--ink);color:var(--bg);font-size:13px;padding:6px 12px;border-radius:99px;box-shadow:0 6px 18px -8px rgba(0,0,0,.5);max-width:calc(100% - 32px);text-align:center}.offlineBar.in{animation:offIn .35s ease-out both}@keyframes offIn{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}@media (prefers-reduced-motion:reduce){.offlineBar.in{animation:none}}</style>
 <title>Café Lab</title>
 
 <link rel="stylesheet" href="fonts.css">
@@ -29,7 +29,7 @@ h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.2}
 h1{font-size:30px} h2{font-size:22px} h3{font-size:17px}
 p{margin:0}
 .brand{display:flex;align-items:center;gap:10px}
-.brand svg{width:34px;height:34px}
+.brand svg{width:34px;height:34px}.brand svg.logo{width:38px;height:36px;flex:none}@media (max-width:420px){.brand svg.logo{width:32px;height:30px}}
 .brand h1{white-space:nowrap}
 .setupBtn{margin-left:auto;font-size:13px;font-weight:500;padding:8px 12px;min-height:44px;text-align:left;line-height:1.25;max-width:13em}
 .setupBtn svg{width:18px;height:18px}
@@ -230,7 +230,7 @@ nav button::before{display:none}
 .langMenu[hidden]{display:none}.langMenu button{justify-content:flex-start;background:transparent;color:var(--ink);border:0;border-radius:10px;padding:10px 12px;min-height:44px;font-weight:500;box-shadow:none}
 .langMenu button[aria-checked="true"]{background:var(--crema-soft);font-weight:600}.langMenu button[aria-checked="true"]::after{content:"✓";margin-left:auto;color:var(--crema)}
 @media (prefers-reduced-motion:no-preference){.langMenu:not([hidden]){animation:slideIn .25s var(--spring) both}}
-@media (max-width:420px){.brand{gap:6px}.brand h1{font-size:21px}.langBtn{padding:8px 7px;gap:3px}.brand .setupBtn{padding:8px}.whoBtn{padding:8px 10px;max-width:8.5em}.whoBtn svg{width:18px;height:18px}}@media (max-width:370px){.whoBtn svg{display:none}.brand h1{font-size:19px}}
+@media (max-width:420px){.brand{gap:5px}.brand h1{font-size:20px;letter-spacing:-.01em}.langBtn{padding:8px 7px;gap:3px}.brand .setupBtn{padding:8px}.whoBtn{padding:8px 9px;max-width:9em}.whoBtn svg{width:18px;height:18px}}@media (max-width:370px){.whoBtn svg{display:none}.brand h1{font-size:19px}}
 .feat{font-size:12px;padding:3px 10px;border-radius:99px;background:var(--sunk);color:var(--ink)}.feat.off{color:var(--muted);text-decoration:line-through}
 #setupDlg .sheetBody{gap:14px}
 .equip{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
@@ -378,7 +378,7 @@ nav button[aria-current="true"] svg{transform:translateY(-2px) scale(1.08)}
   dialog[open]{animation:sheet .4s var(--spring)}@keyframes sheet{from{transform:translateY(40px) scale(.98);opacity:0}to{transform:none;opacity:1}}
   dialog[open]::backdrop{animation:fade .3s ease}@keyframes fade{from{opacity:0}}
   .saved svg{animation:tick .5s var(--spring)}@keyframes tick{from{transform:scale(0) rotate(-30deg)}to{transform:none}}
-  .brand svg path:last-child{animation:steam 3s ease-in-out infinite}@keyframes steam{50%{transform:translateY(-2px);opacity:.5}}
+  .brand .logoSteam path{animation:steam 3s ease-in-out infinite}.brand .logoSteam path:last-child{animation-delay:.8s}@keyframes steam{50%{transform:translateY(-2px);opacity:.5}}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 @media (max-width:420px){.nextGrid{grid-template-columns:96px minmax(0,1fr)}.dial{width:96px;height:96px}.big{font-size:36px}}
@@ -386,7 +386,7 @@ nav button[aria-current="true"] svg{transform:translateY(-2px) scale(1.08)}
 
 </head><body><main>
   <div class="brand">
-    <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 15h22v8a10 10 0 0 1-10 10h-2A10 10 0 0 1 7 23z" fill="var(--crema)"/><path d="M29 18h3a4 4 0 0 1 0 8h-3" fill="none" stroke="var(--crema)" stroke-width="3"/><path d="M14 10c0-2 2-2 2-4M20 10c0-2 2-2 2-4" stroke="var(--muted)" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+    <svg class="logo" viewBox="60 26 80 76" aria-hidden="true"><defs><clipPath id="logoCup"><path d="M78 52h44l-3 26a14 14 0 0 1-14 12h-10a14 14 0 0 1-14-12z"/></clipPath></defs><ellipse cx="100" cy="94" rx="36" ry="5.5" fill="var(--surface)" stroke="var(--ink)" stroke-width="3"/><path d="M120 58c11-1 13 16 1 17" fill="none" stroke="var(--ink)" stroke-width="3.6" stroke-linecap="round"/><path d="M78 52h44l-3 26a14 14 0 0 1-14 12h-10a14 14 0 0 1-14-12z" fill="var(--surface)"/><g clip-path="url(#logoCup)"><rect x="60" y="56" width="80" height="36" fill="#3a2214"/><rect x="60" y="56" width="80" height="5" fill="#c8894a"/></g><path d="M78 52h44l-3 26a14 14 0 0 1-14 12h-10a14 14 0 0 1-14-12z" fill="none" stroke="var(--ink)" stroke-width="3.2" stroke-linejoin="round"/><g class="logoSteam" fill="none" stroke="var(--muted)" stroke-width="2.6" stroke-linecap="round"><path d="M93 45c-4-5 4-8 0-13"/><path d="M106 47c-4-5 4-8 0-13"/></g></svg>
     <h1>Café Lab</h1><button type="button" class="ghost whoBtn" id="whoBtn"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span id="whoName">Sign in</span></button><button type="button" class="ghost setupBtn" id="setupBtn" aria-label="Settings" title="Settings" ><svg class="ico cog" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><span id="setupLine"></span></button><div class="langWrap"><button type="button" class="ghost langBtn" id="langBtn" aria-label="Language: English (EN)" aria-controls="langMenu" aria-expanded="false"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span id="langCode">EN</span></button><div class="langMenu" id="langMenu" hidden><button type="button" data-lang="en" lang="en">English</button><button type="button" data-lang="pt" lang="pt">Português</button><button type="button" data-lang="nl" lang="nl">Nederlands</button></div></div>
   </div>
   <div class="modeSw" role="group" aria-label="Mode"><button type="button" data-mode="simple" aria-pressed="false"><svg class="ico" viewBox="0 0 24 24"><path d="M5 9h12v4a6 6 0 0 1-6 6h0a6 6 0 0 1-6-6z"/><path d="M17 11h2a2 2 0 0 1 0 4h-2"/></svg>Simple<span class="sub">any brewer</span></button><button type="button" data-mode="pro" aria-pressed="false"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4v3M12 12l4-3"/></svg>Pro<span class="sub">espresso dial-in</span></button></div>
@@ -1795,7 +1795,12 @@ updateWhoBtn();learnKnown();
  addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferred=e;paint()});addEventListener("appinstalled",()=>{deferred=null;try{toast("Installed. Café Lab now works offline.")}catch{}});
  document.addEventListener("DOMContentLoaded",paint);if(document.readyState!=="loading")paint();
  // offline badge
- const bar=document.createElement("div");bar.className="offlineBar";bar.textContent="Offline. Everything still works and saves on this phone.";bar.hidden=navigator.onLine;document.body.appendChild(bar);
- addEventListener("online",()=>bar.hidden=true);addEventListener("offline",()=>bar.hidden=false)})();
+ // shows for 4 s when the connection drops (or the app opens offline), then again for 4 s every 3 min while still offline
+ const bar=document.createElement("div");bar.className="offlineBar";bar.setAttribute("role","status");bar.textContent="Offline. Everything still works and saves on this phone.";bar.hidden=true;document.body.appendChild(bar);
+ const SHOW_MS=4000,EVERY_MS=180000;let hideT=null,every=null;
+ const flash=()=>{bar.hidden=false;bar.classList.remove("in");void bar.offsetWidth;bar.classList.add("in");clearTimeout(hideT);hideT=setTimeout(()=>{bar.hidden=true},SHOW_MS)};
+ const goneOffline=()=>{flash();clearInterval(every);every=setInterval(()=>{if(!navigator.onLine)flash()},EVERY_MS)};
+ const backOnline=()=>{clearInterval(every);every=null;clearTimeout(hideT);bar.hidden=true};
+ addEventListener("online",backOnline);addEventListener("offline",goneOffline);if(!navigator.onLine)goneOffline()})();
 </script>
 </body></html>
