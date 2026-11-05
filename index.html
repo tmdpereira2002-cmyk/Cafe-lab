@@ -1851,12 +1851,12 @@ updateWhoBtn();learnKnown();
  /* Install bar: one clear way to install, or to get to Chrome when this browser can't install. */
  function installBar(o){
    const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone;if(standalone)return;
-   try{if(localStorage.getItem("instBarHide")==="1")return}catch(e){}
+   try{if(localStorage.getItem("cafeLabInstallHide")==="1")return}catch(e){}
    const ua=navigator.userAgent,android=/android/i.test(ua),ios=/iphone|ipad|ipod/i.test(ua);
    const intent="intent://"+o.url.replace(/^https:\/\//,"")+"#Intent;scheme=https;package=com.android.chrome;end";
    const el=document.createElement("div");el.className="instBar";el.setAttribute("role","region");el.setAttribute("aria-label","Install");el.hidden=true;o.place(el);
    let shown=false;
-   const close=()=>{el.hidden=true;try{localStorage.setItem("instBarHide","1")}catch(e){}};
+   const close=()=>{el.hidden=true;try{localStorage.setItem("cafeLabInstallHide","1")}catch(e){}};
    function paint(){const d=o.getDeferred();let h="";
      if(d)h=`<div class="ibTxt"><b>${o.t("Install","Installeer")} ${o.name}</b><span>${o.t("Adds it to your home screen. Works without internet.","Zet het op je beginscherm. Werkt zonder internet.")}</span></div><button type="button" class="ibGo">${o.t("Install","Installeren")}</button>`;
      else if(android)h=`<div class="ibTxt"><b>${o.t("Install","Installeer")} ${o.name}</b><span>${o.t("No Install button? This page is probably open inside another app. Open it in Chrome, then tap Install here. Already installed? Open it from your home screen.","Geen installeerknop? Deze pagina staat waarschijnlijk open in een andere app. Open hem in Chrome en tik hier op Installeren. Al geïnstalleerd? Open hem vanaf je beginscherm.")}</span></div><a class="ibGo" href="${intent}">${o.t("Open in Chrome","Open in Chrome")}</a>`;
