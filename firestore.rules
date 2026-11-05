@@ -1,14 +1,20 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Name-only profiles for you and your friends. Anyone using the app can read them
-    // (that's how Friends' recipes works); nobody can delete them.
+    // Café Lab (home app): name-only profiles shared between friends.
     match /profiles/{id} {
       allow read: if request.auth != null;
       allow create, update: if request.auth != null
         && id.matches('^[a-z0-9-]{1,40}$')
         && request.resource.data.name is string;
       allow delete: if false;
+    }
+    // Café Lab Business: one private document per café owner account.
+    // Only the signed-in owner (username + password) can read or change it.
+    match /bizAccounts/{uid} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == uid
+        && request.auth.token.firebase.sign_in_provider == 'password';
     }
   }
 }
