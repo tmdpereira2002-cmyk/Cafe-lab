@@ -58,7 +58,7 @@ const css=`
 .mgArt text.cap{font:700 11px var(--body,system-ui);fill:var(--muted)}
 .mgArt text.tick{font:600 9.5px var(--mono,ui-monospace,monospace);fill:var(--muted)}
 .mgArt text.cname{font:700 11px var(--body,system-ui)}
-.mgArt text.ph{font:700 8px var(--body,system-ui);fill:var(--muted)}.mgArt text.ph.on{fill:#fff}
+.mgArt text.ph{font:700 8px var(--body,system-ui);fill:var(--ink)}.mgArt text.ph.on{fill:var(--on-crema,#fff)}
 .mgArt text.stopT{font:800 11px var(--body,system-ui);fill:#fff;letter-spacing:.08em}
 @media (prefers-reduced-motion:no-preference){
  .mgA .pourC{animation:mgCarton 3s ease-out infinite}.mgA .streamA{transform-box:fill-box;transform-origin:50% 0;animation:mgStreamA 3s ease-out infinite}
@@ -110,7 +110,7 @@ function lbl(x,y,lines,to,o={}){lines=lines.flatMap(l=>String(l).split("|")); //
  const w=Math.ceil(Math.max(...lines.map(l=>l.length))*CW)+16,h=lines.length*LH+9,X=o.right?x-w:x;
  const tone=o.tone||"",fill=tone==="good"?"#e3f1e1":tone==="bad"?"#fbe4dd":"var(--surface)",stroke=tone==="good"?"#3d7a4c":tone==="bad"?"#c4472b":"var(--line)";
  let lead="";if(to){const cx=Math.max(X,Math.min(X+w,to[0])),cy=Math.max(y,Math.min(y+h,to[1]));lead=`<path d="M${cx} ${cy}L${to[0]} ${to[1]}" stroke="var(--ink)" stroke-width="1" stroke-dasharray="2 2" opacity=".55"/><circle cx="${to[0]}" cy="${to[1]}" r="2.6" fill="var(--crema)" stroke="var(--surface)" stroke-width="1"/>`}
- return `<g class="lblWrap${o.cls?" "+o.cls:""}" data-to="${to?to.join(","):""}">${lead}<g class="lbl" data-right="${o.right?x:""}"><rect x="${X}" y="${y}" width="${w}" height="${h}" rx="7" fill="${fill}" stroke="${stroke}"/>${lines.map((l,i)=>`<text x="${X+8}" y="${y+15+i*LH}"${i===0&&o.bold!==false?' font-weight="700"':""}>${l}</text>`).join("")}</g></g>`}
+ return `<g class="lblWrap${o.cls?" "+o.cls:""}" data-to="${to?to.join(","):""}">${lead}<g class="lbl" data-right="${o.right?x:""}"><rect x="${X}" y="${y}" width="${w}" height="${h}" rx="7" fill="${fill}" stroke="${stroke}"/>${lines.map((l,i)=>`<text x="${X+8}" y="${y+15+i*LH}"${i===0&&o.bold!==false?' font-weight="700"':""}${tone?` style="fill:${tone==="good"?"#1f5130":"#8a2410"}"`:""}>${l}</text>`).join("")}</g></g>`}
 const panel=()=>`<rect x="1" y="1" width="358" height="198" rx="16" fill="var(--sunk,#efe5da)"/><path d="M14 184H346" stroke="var(--line)" stroke-width="2" stroke-linecap="round"/>`;
 // stainless jug: rim from (x,y), width w, body height h; milk level as y inside; extras drawn inside the clip
 function jug(x,y,w,h,level,inside="",o={}){const id="j"+(++uid),b=y+h,inset=w*0.08;
