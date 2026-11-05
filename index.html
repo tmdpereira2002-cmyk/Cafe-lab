@@ -1,5 +1,4 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8">
-<script>/* the installable app lives at index.html; send the bare folder address there */if(/\/$/.test(location.pathname))location.replace(location.pathname+"index.html"+location.search+location.hash)</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4ede6" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#1c1512" media="(prefers-color-scheme: dark)">
 <meta name="description" content="Espresso dial-in and brew guide that works offline.">
@@ -8,6 +7,12 @@
 <script src="knowledge.js"></script><script src="config.js"></script><script src="fb.js" defer></script>
 <style>.installBox{display:flex;flex-direction:column;gap:6px;margin:6px 0}.offlineBar{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 8px);z-index:40;background:var(--ink);color:var(--bg);font-size:13px;padding:6px 12px;border-radius:99px;box-shadow:0 6px 18px -8px rgba(0,0,0,.5);max-width:calc(100% - 32px);text-align:center}.offlineBar.in{animation:offIn .35s ease-out both}@keyframes offIn{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}@media (prefers-reduced-motion:reduce){.offlineBar.in{animation:none}}</style>
 <style>.kchips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}.kchips::-webkit-scrollbar{display:none}.kchip{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:7px 14px;font:500 14px var(--body);min-height:38px;cursor:pointer}.kchip[aria-pressed="true"]{background:var(--crema);border-color:var(--crema);color:var(--on-crema)}.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}.kcard{display:flex;flex-direction:column;gap:4px;text-align:left;border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--surface);color:var(--ink);font:inherit;min-width:0}button.kcard{cursor:pointer;align-items:flex-start;justify-content:flex-start;text-align:left;box-shadow:none}.kcard small{color:var(--muted);font-size:13px}.kcard span{font-size:14px}.kcard .kmore{color:var(--crema);font-weight:600;font-size:13px}.kfacts{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px}.ksay{margin-top:12px;padding:12px;border-radius:12px;background:var(--crema-soft)}</style>
+<style>.instBar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;position:relative;padding-right:44px!important;background:var(--ink);color:var(--bg);border-radius:14px;padding:10px 10px 10px 14px;margin:0 0 14px;box-shadow:0 6px 18px rgba(40,20,10,.18)}
+.instBar[hidden]{display:none}
+.instBar .ibTxt{display:flex;flex-direction:column;gap:2px;flex:1 1 100%;min-width:0;font-size:13px;line-height:1.35}.instBar .ibTxt b{font-size:15px}.instBar .ibTxt span{opacity:.85}
+.instBar .ibGo{flex:none;background:var(--crema);color:var(--on-crema);border:0;border-radius:10px;padding:10px 14px;font:600 14px var(--body,system-ui);text-decoration:none;min-height:44px;display:inline-flex;align-items:center;cursor:pointer}
+.instBar .ibX{position:absolute;top:2px;right:2px;flex:none;background:transparent;color:var(--bg);border:0;font-size:16px;min-width:36px;min-height:44px;cursor:pointer;opacity:.7}
+</style>
 <title>Café Lab</title>
 
 <link rel="stylesheet" href="fonts.css">
@@ -1843,6 +1848,30 @@ updateWhoBtn();learnKnown();
    else b.innerHTML=`<p class="hint"><b>Install:</b> open your browser menu and choose "Install app" or "Add to Home screen". It then works without internet.</p>`}
  addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferred=e;paint()});addEventListener("appinstalled",()=>{deferred=null;try{toast("Installed. Café Lab now works offline.")}catch{}});
  document.addEventListener("DOMContentLoaded",paint);if(document.readyState!=="loading")paint();
+ /* Install bar: one clear way to install, or to get to Chrome when this browser can't install. */
+ function installBar(o){
+   const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone;if(standalone)return;
+   try{if(localStorage.getItem("instBarHide")==="1")return}catch(e){}
+   const ua=navigator.userAgent,android=/android/i.test(ua),ios=/iphone|ipad|ipod/i.test(ua);
+   const intent="intent://"+o.url.replace(/^https:\/\//,"")+"#Intent;scheme=https;package=com.android.chrome;end";
+   const el=document.createElement("div");el.className="instBar";el.setAttribute("role","region");el.setAttribute("aria-label","Install");el.hidden=true;o.place(el);
+   let shown=false;
+   const close=()=>{el.hidden=true;try{localStorage.setItem("instBarHide","1")}catch(e){}};
+   function paint(){const d=o.getDeferred();let h="";
+     if(d)h=`<div class="ibTxt"><b>${o.t("Install","Installeer")} ${o.name}</b><span>${o.t("Adds it to your home screen. Works without internet.","Zet het op je beginscherm. Werkt zonder internet.")}</span></div><button type="button" class="ibGo">${o.t("Install","Installeren")}</button>`;
+     else if(android)h=`<div class="ibTxt"><b>${o.t("Install","Installeer")} ${o.name}</b><span>${o.t("No Install button? This page is probably open inside another app. Open it in Chrome, then tap Install here. Already installed? Open it from your home screen.","Geen installeerknop? Deze pagina staat waarschijnlijk open in een andere app. Open hem in Chrome en tik hier op Installeren. Al geïnstalleerd? Open hem vanaf je beginscherm.")}</span></div><a class="ibGo" href="${intent}">${o.t("Open in Chrome","Open in Chrome")}</a>`;
+     else if(ios)h=`<div class="ibTxt"><b>${o.t("Install","Installeer")} ${o.name}</b><span>${o.t("In Safari, tap Share, then Add to Home Screen.","Tik in Safari op Delen en dan op Zet op beginscherm.")}</span></div>`;
+     else{el.hidden=true;return}
+     el.innerHTML=h+`<button type="button" class="ibX" aria-label="${o.t("Close","Sluiten")}">✕</button>`;el.hidden=false;shown=true;
+     el.querySelector(".ibX").onclick=close;
+     const g=el.querySelector("button.ibGo");if(g)g.onclick=async()=>{const dd=o.getDeferred();if(!dd)return;dd.prompt();const r=await dd.userChoice;o.clearDeferred();if(r&&r.outcome==="accepted")el.hidden=true;else paint()}}
+   addEventListener("beforeinstallprompt",()=>setTimeout(paint,0));
+   addEventListener("appinstalled",()=>{el.hidden=true});
+   setTimeout(()=>{if(!shown)paint()},2500);
+   return paint;
+ }
+ 
+ installBar({name:"Café Lab",url:"https://tmdpereira2002-cmyk.github.io/Cafe-lab/",getDeferred:()=>deferred,clearDeferred:()=>{deferred=null},t:(en,nl)=>(typeof setup!=="undefined"&&setup.lang==="nl")?nl:en,place:el=>{const m=document.querySelector("main");m?m.prepend(el):document.body.prepend(el)}});
  // offline badge
  // shows for 4 s when the connection drops (or the app opens offline), then again for 4 s every 3 min while still offline
  const bar=document.createElement("div");bar.className="offlineBar";bar.setAttribute("role","status");bar.textContent="Offline. Everything still works and saves on this phone.";bar.hidden=true;document.body.appendChild(bar);
