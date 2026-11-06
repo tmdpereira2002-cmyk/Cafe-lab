@@ -1,4 +1,4 @@
-// Café Lab: step-by-step milk steaming guide with animations. English and Dutch (Portuguese shows English).
+// Café Lab: step-by-step milk steaming guide with animations. English and Dutch built in; Portuguese comes from the page's PT dictionary when there is one.
 (function(){
 const B=(en,nl)=>({en,nl});
 const css=`
@@ -283,7 +283,8 @@ function fitLabels(root){root.querySelectorAll(".mgArt g.lbl").forEach(g=>{const
  if(lead&&to.length===2){const y=+r.getAttribute("y"),h=+r.getAttribute("height"),cx=Math.max(x,Math.min(x+w,to[0])),cy=Math.max(y,Math.min(y+h,to[1]));lead.setAttribute("d",`M${cx} ${cy}L${to[0]} ${to[1]}`)}})}
 window.mgFitLabels=fitLabels;
 window.openMilkGuide=function(open,lang){
- const L=x=>x&&typeof x==="object"?(x[lang]||x.en):x,T=(en,nl)=>lang==="nl"?nl:en;
+ const PTD=lang==="pt"&&typeof PT!=="undefined"?PT:null,pt=en=>{if(!PTD)return en;if(PTD[en])return PTD[en];return String(en).includes("|")?String(en).split("|").map(p=>PTD[p]||p).join("|"):en};
+const L=x=>x&&typeof x==="object"?(lang==="pt"?pt(x.en):x[lang]||x.en):x,T=(en,nl)=>lang==="nl"?nl:lang==="pt"?pt(en):en;
  const LL=k=>LBL[k]?L(LBL[k]):k;const art=i=>`<div class="mgArt mgA">${DRAW[i](LL)}</div>`;
  const tabs=[["steps",T("Step by step","Stap voor stap")],["foam",T("How much foam","Hoeveel schuim")],["why",T("Why it works","Waarom het werkt")],["plant",T("Plant milks","Plantaardige melk")],["fix",T("Problems","Problemen")],["check",T("Sign-off check","Aftekencheck")]];
  const body=()=>{let h="";
