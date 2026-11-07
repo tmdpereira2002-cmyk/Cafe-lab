@@ -12,7 +12,7 @@ const css=`
 .mgStep h3{margin:0 0 4px}.mgStep ul{margin:6px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
 .mgTip{padding:10px 12px;border-radius:12px;background:var(--crema-soft);font-size:14px}
 .mgTable{width:100%;border-collapse:collapse;font-size:14px}.mgTable td,.mgTable th{text-align:left;vertical-align:top;padding:8px 6px;border-bottom:1px solid var(--line)}.mgTable th{color:var(--muted);font-weight:600}
-.mgSrc{font-size:12px;color:var(--muted)}.mgSrc a{color:var(--crema)}
+.mgSrc{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline}.mgSrc a{color:var(--crema)}
 @media (prefers-reduced-motion:no-preference){
  .mgA .fillIn{transform-box:fill-box;transform-origin:50% 100%;animation:mgFill 3s ease-out infinite}
  .mgA .grow{transform-box:fill-box;transform-origin:50% 100%;animation:mgGrow 4s ease-in-out infinite}
@@ -300,7 +300,7 @@ const L=x=>x&&typeof x==="object"?(lang==="pt"?pt(x.en):x[lang]||x.en):x,T=(en,n
   if(tab==="check")h=`<p class="hint" style="margin:0">${T("What a trainer should see before signing off milk steaming. Check yourself first, then show your trainer three drinks in a row.","Wat een trainer moet zien voordat melk opschuimen wordt afgetekend. Controleer jezelf eerst en laat dan drie drankjes achter elkaar zien.")}</p><div style="display:flex;flex-direction:column;gap:2px">${CHECK.map((c,i)=>`<label style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer"><input type="checkbox" style="width:22px;height:22px;min-height:0;flex:none;margin-top:1px">${L(c)}</label>`).join("")}</div>`;
   if(tab==="fix")h=`<table class="mgTable"><tr><th>${T("Problem","Probleem")}</th><th>${T("Cause and fix","Oorzaak en oplossing")}</th></tr>${FIX.map(f=>`<tr><td><b>${L(f[0])}</b></td><td>${L(f[1])}</td></tr>`).join("")}</table>`;
   return `<div class="kchips">${tabs.map(([k,l])=>`<button type="button" class="kchip" data-mtab="${k}" aria-pressed="${tab===k}">${l}</button>`).join("")}</div><div class="mg">${h}</div>
-  <p class="mgSrc">${T("Sources","Bronnen")}: ${SRC.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${s[0]}</a>`).join(" · ")}</p>`};
+  <p class="mgSrc"><span>${T("Sources","Bronnen")}:</span>${SRC.map(s=>`<a href="${s[1]}" target="_blank" rel="noopener">${s[0]}</a>`).join("")}</p>`};
  const host=open(`<h2 id="sheetTitle">${T("Steaming milk","Melk opschuimen")}</h2><p class="hint">${T("Silky microfoam, step by step.","Zijdezacht microschuim, stap voor stap.")}</p><div id="mgHost"></div>`);
  const paint=()=>{host.innerHTML=body();fitLabels(host)};
  host.onclick=e=>{const b=e.target.closest("[data-st],[data-mv],[data-mtab]");if(!b)return;e.stopPropagation();const d=b.dataset;
