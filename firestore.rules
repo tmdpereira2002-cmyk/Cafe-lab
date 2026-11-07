@@ -1,6 +1,10 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null
+        && request.auth.token.firebase.sign_in_provider == 'password';
+    }
     // Café Lab (home app): name-only profiles shared between friends.
     match /profiles/{id} {
       allow read: if request.auth != null;
@@ -9,12 +13,29 @@ service cloud.firestore {
         && request.resource.data.name is string;
       allow delete: if false;
     }
-    // Café Lab Business: one private document per café owner account.
-    // Only the signed-in owner (username + password) can read or change it.
+    // Café Lab Business: one document per café. The manager (email login) owns it;
+    // the team login is a member. Only the manager can change who is a member.
+    match /bizCafes/{cafe} {
+      allow read: if signedIn()
+        && ((resource == null && cafe == request.auth.uid)
+            || (resource != null && request.auth.uid in resource.data.members));
+      allow create: if signedIn() && cafe == request.auth.uid
+        && request.resource.data.owner == request.auth.uid
+        && request.resource.data.members == [request.auth.uid];
+      allow update: if signedIn() && request.auth.uid in resource.data.members
+        && request.resource.data.owner == resource.data.owner
+        && (request.auth.uid == resource.data.owner
+            || (request.resource.data.members == resource.data.members
+                && request.resource.data.team == resource.data.team));
+      allow delete: if signedIn() && request.auth.uid == resource.data.owner;
+    }
+    // Which café a login belongs to. Each login can only read and write its own.
+    match /bizUsers/{uid} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+    // Earlier test version, kept so nothing breaks.
     match /bizAccounts/{uid} {
-      allow read, write: if request.auth != null
-        && request.auth.uid == uid
-        && request.auth.token.firebase.sign_in_provider == 'password';
+      allow read, write: if signedIn() && request.auth.uid == uid;
     }
   }
 }
