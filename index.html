@@ -425,8 +425,8 @@ nav button[aria-current="true"] svg{transform:translateY(-2px) scale(1.08)}
 
 <style>
 /* layout safety net for small phones and big phones */
-@media (max-width:640px){.brand .setupBtn #setupLine{display:none}}
-.brand .whoBtn{min-width:44px}
+@media (max-width:640px){.brand .setupBtn #setupLine{display:none}}@media (min-width:421px) and (max-width:640px){.brand h1{font-size:24px}}
+.brand .whoBtn svg{width:18px;height:18px}.brand .whoBtn{min-width:44px}.brand .whoBtn>span{min-width:0;flex:0 1 auto;white-space:nowrap}.brand .whoBtn>svg,.brand .whoBtn::after{flex:none}
 #sheet:has(#sheetArt[hidden]) .sheetBody{padding-top:62px}
 @media (max-width:360px){.grid>.field:has(>select),.grid>.field:has(>input:not(.num):not([type=date]):not([type=number])){grid-column:1/-1}.grid:has(#nbRob){grid-template-columns:1fr}}
 </style>
